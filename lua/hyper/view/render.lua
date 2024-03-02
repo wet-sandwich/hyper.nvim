@@ -54,14 +54,13 @@ end
 
 function M:method_url()
   local state = self.view.state.get_state()
-  local t = {
+  self:append(table.concat({
     strings.home.method,
     state.method,
     string.rep(" ", col_width - #strings.home.method - #state.method),
     strings.home.url,
     state.url,
-  }
-  self:append(table.concat(t))
+  }))
 end
 
 function M:query_params_and_body()
@@ -69,12 +68,11 @@ function M:query_params_and_body()
   local query = string.format(strings.home.query, Util.dict_length(state.query_params))
 
   if Util.is_body_method(state.method) then
-    local t = {
+    self:append(table.concat({
       query,
       string.rep(" ", col_width - #query),
       strings.home.body,
-    }
-    self:append(table.concat(t))
+    }))
   else
     self:append(query)
   end
@@ -84,24 +82,22 @@ function M:headers_vars_collections()
   local state = self.view.state.get_state()
   local headers = string.format(strings.home.headers, Util.dict_length(state.headers))
 
-  local t = {
+  self:append(table.concat({
     headers,
     string.rep(" ", col_width - #headers),
     strings.home.envars,
     -- string.rep(" ", col_width - #strings.home.envars),
     -- strings.home.collection,
-  }
-  self:append(table.concat(t))
+  }))
 end
 
 function M:request_and_clear()
   self:append("")
-  local t = {
+  self:append(table.concat({
     strings.home.request,
     string.rep(" ", col_width - #strings.home.request),
     strings.home.clear,
-  }
-  self:append(table.concat(t))
+  }))
 end
 
 function M:response()
@@ -116,7 +112,14 @@ function M:response()
 
     self:append(string.rep("-", vim.api.nvim_win_get_width(self.view.win)))
 
-    self:append("STATUS " .. res.status .. "        " .. "TIME " .. res_time .. "ms")
+    local status = "STATUS " .. res.status
+    local time = "TIME " .. res_time .. "ms"
+    self:append(table.concat({
+      status,
+      string.rep(" ", col_width - #status),
+      time,
+    }))
+
     self:append("")
 
     local body_lines = Util.pretty_format(body)
