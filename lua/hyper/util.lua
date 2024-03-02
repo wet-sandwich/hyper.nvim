@@ -130,16 +130,25 @@ function M.http_request(opts)
     url = opts.url,
   }, opts.variables)
 
+  local body = {}
+  for _, v in ipairs(filled_opts.body) do
+    table.insert(body, M.ltrim(v))
+  end
+
   local res = curl.request {
     url = filled_opts.url,
     method = opts.method,
     query = filled_opts.query_params,
-    body = table.concat(filled_opts.body, ""),
+    body = table.concat(body, ""),
     headers = filled_opts.headers,
     raw = raw,
   }
 
   return res
+end
+
+function M.ltrim(str)
+  return str:match'^%s*(.*)'
 end
 
 function M.find_collections()

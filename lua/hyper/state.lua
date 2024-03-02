@@ -20,7 +20,7 @@ local example_state = {
   query_params = {
     param = "value",
   },
-  body = {"{","\t\"my_var\": \"{{my_var}}\"","}"},
+  body = {"{","  \"my_var\": \"{{my_var}}\"","}"},
   headers = {
     ["User-Agent"] = "{{user}}",
   },
