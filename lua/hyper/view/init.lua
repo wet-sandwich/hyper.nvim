@@ -174,6 +174,11 @@ function M:setup_commands()
     self.state.set_state("res", res)
     return self:update()
   end, "make request")
+
+  self:on_key("C", function()
+    self.state.clear_state()
+    return self:update()
+  end, "clear all")
 end
 
 return M

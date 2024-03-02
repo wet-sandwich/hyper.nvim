@@ -14,6 +14,7 @@ local strings = {
     headers = "[H]eaders (%d)",
     envars = "[E]nv Variables",
     request = "Make [R]equest",
+    clear = "[C]lear All",
     -- collection = "[C]ollections",
   },
   -- collection = {
@@ -46,7 +47,7 @@ function M:main()
   self:method_url()
   self:query_params_and_body()
   self:headers_vars_collections()
-  self:request()
+  self:request_and_clear()
   self:response()
   self:trim()
 end
@@ -60,7 +61,6 @@ function M:method_url()
     strings.home.url,
     state.url,
   }
-
   self:append(table.concat(t))
 end
 
@@ -88,15 +88,20 @@ function M:headers_vars_collections()
     headers,
     string.rep(" ", col_width - #headers),
     strings.home.envars,
-    string.rep(" ", col_width - #strings.home.envars),
-    strings.home.collection,
+    -- string.rep(" ", col_width - #strings.home.envars),
+    -- strings.home.collection,
   }
   self:append(table.concat(t))
 end
 
-function M:request()
+function M:request_and_clear()
   self:append("")
-  self:append(strings.home.request)
+  local t = {
+    strings.home.request,
+    string.rep(" ", col_width - #strings.home.request),
+    strings.home.clear,
+  }
+  self:append(table.concat(t))
 end
 
 function M:response()

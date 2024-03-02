@@ -2,28 +2,40 @@ local M = {}
 
 local default_state = {
   mode = "main",
-  url = "https://echo.zuplo.io",
+  url = "",
   method = "GET",
+  response = {},
+  query_params = {},
+  body = {},
+  headers = {},
+  variables = {},
+  -- collections = {},
+}
+
+local example_state = {
+  mode = "main",
+  url = "https://echo.zuplo.io",
+  method = "POST",
   response = {},
   query_params = {
     param = "value",
   },
-  body = {"{}"},
+  body = {"{","\t\"my_var\": \"{{my_var}}\"","}"},
   headers = {
-    ["User-Agent"] = "user",
+    ["User-Agent"] = "{{user}}",
   },
   variables = {
     user = "wet-sandwich",
     my_var = "foo",
   },
-  collections = {},
+  -- collections = {},
 }
 
 function M.init()
   if vim.g.hyper then
     return
   end
-  vim.g.hyper = default_state
+  vim.g.hyper = example_state
 end
 
 function M.get_state(key)
@@ -38,6 +50,10 @@ function M.set_state(key, value)
   local state = vim.g.hyper
   state[key] = value
   vim.g.hyper = state
+end
+
+function M.clear_state()
+  vim.g.hyper = default_state
 end
 
 return M
