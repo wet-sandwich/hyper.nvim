@@ -105,7 +105,7 @@ function M:response()
 
   local res = self.view.state.get_state("res")
   if res and res.status ~= nil then
-    local body, extras = Util.parse_body(res.body)
+    local body, extras = Util.parse_response_body(res.body)
     local res_time = body and math.floor(extras.response_time*1000) or 0
 
     self:append("Response:")

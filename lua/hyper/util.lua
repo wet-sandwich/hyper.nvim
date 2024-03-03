@@ -46,9 +46,8 @@ function M.pretty_format(object)
   return lines
 end
 
-function M.parse_body(body_str)
+function M.parse_response_body(body_str)
   local i = string.find(body_str, "} ")
-  print(vim.inspect(body_str))
   local body = vim.json.decode(string.sub(body_str, 1, i))
 
   local write_out = string.sub(body_str, i+2, -1)
