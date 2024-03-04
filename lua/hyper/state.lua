@@ -8,7 +8,10 @@ local default_state = {
   query_params = {},
   body = {},
   headers = {},
-  variables = {},
+  variables = {
+    paths = {},
+    selection = nil,
+  },
   -- collections = {},
 }
 
@@ -25,8 +28,8 @@ local example_state = {
     ["User-Agent"] = "{{user}}",
   },
   variables = {
-    user = "wet-sandwich",
-    my_var = "foo",
+    paths = {},
+    selection = nil,
   },
   -- collections = {},
 }
