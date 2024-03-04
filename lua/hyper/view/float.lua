@@ -33,7 +33,7 @@ function M:init(opts)
   }
 
   self:mount()
-  self:on_key("q", self.close, "close window", "all")
+  self:on_key("q", self.close, "close window")
   return self
 end
 
@@ -47,13 +47,9 @@ function M:mount()
   self.win = vim.api.nvim_open_win(self.buf, true, self.win_opts)
 end
 
-function M:on_key(key, fn, desc, mode)
+function M:on_key(key, fn, desc)
   vim.keymap.set("n", key, function()
-    local current_mode = self.state.get_state("mode")
-    mode = mode == nil and "main" or mode
-    if current_mode == mode or mode == "all" then
-      fn(self)
-    end
+    fn(self)
   end, {
     nowait = true,
     buffer = self.buf,

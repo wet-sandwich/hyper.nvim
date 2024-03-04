@@ -95,7 +95,7 @@ end
 
 local function substitute_envars(tt, variables)
   local token_map = {}
-  for k, v in pairs(variables) do
+  for k, v in pairs(M.lines_to_kv(variables, "=")) do
     if k:sub(1,1) ~= "#" then
       token_map["{{" .. k .. "}}"] = v
     end
@@ -122,12 +122,13 @@ end
 
 function M.http_request(opts)
   local raw = {"-w response_time=%{time_total}"}
+  local env_lines = vim.fn.readfile(opts.variables.selection)
   local filled_opts = substitute_envars({
     query_params = opts.query_params,
     headers = opts.headers,
     body = opts.body,
     url = opts.url,
-  }, opts.variables)
+  }, env_lines)
 
   local body = {}
   for _, v in ipairs(filled_opts.body) do
@@ -148,6 +149,17 @@ end
 
 function M.ltrim(str)
   return str:match'^%s*(.*)'
+end
+
+function M.find_env_files()
+  local paths = vim.fs.find(function(name, _)
+    return name:match('^%.env.*') or name:match('.*%.env')
+  end, {
+      limit = 4,
+      type = 'file',
+    })
+
+  return paths
 end
 
 function M.find_collections()

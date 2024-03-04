@@ -17,6 +17,11 @@ local strings = {
     clear = "[C]lear All",
     -- collection = "[C]ollections",
   },
+  vars = {
+    back = "[B]ack",
+    choose = "[S]elect File",
+    edit = "[E]dit Variables",
+  }
   -- collection = {
   --   home = "[O] Home",
   --   new = "[N] New",
@@ -36,7 +41,13 @@ function M:update()
 
   if mode == "main" then
     self:main()
-  elseif mode == "collection" then
+  end
+
+  if mode == "vars" then
+    self:variables()
+  end
+
+  if mode == "collection" then
     self:collection()
   end
 
@@ -126,6 +137,45 @@ function M:response()
     for _, line in ipairs(body_lines) do
       self:append(line)
     end
+  end
+end
+
+function M:variables()
+  local vars = self.view.state.get_state("variables")
+
+  if next(vars.paths) == nil then
+    vars.paths = Util.find_env_files()
+    if #vars.paths == 1 then
+      vars.selection = vars.paths[1]
+    end
+    self.view.state.set_state("variables", vars)
+  end
+
+  self:variables_menu(vars.selection)
+  self:variables_body(vars.selection)
+end
+
+function M:variables_menu(env_file_path)
+  self:append(table.concat({
+    strings.vars.back,
+    string.rep(" ", col_width - #strings.vars.back),
+    strings.vars.choose,
+    string.rep(" ", col_width - #strings.vars.choose),
+    env_file_path ~= nil and strings.vars.edit or "",
+  }))
+end
+
+function M:variables_body(env_file_path)
+  self:append("")
+  if env_file_path ~= nil then
+    local env_file = vim.fn.readfile(env_file_path)
+    self:append(env_file_path)
+    self:append(string.rep("-", vim.api.nvim_win_get_width(self.view.win)))
+    for _, line in ipairs(env_file) do
+      self:append(line)
+    end
+  else
+    self:append("No .env file selected")
   end
 end
 
