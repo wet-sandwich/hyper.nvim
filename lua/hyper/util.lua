@@ -75,7 +75,7 @@ end
 
 function M.lines_to_kv(lines, sep)
   local tbl = {}
-  local pattern = "(#?%s*%a[%w%-_]*)%s*" .. sep .. "%s*(.*)"
+  local pattern = "%s*(#?%s*%a[%w%-_]*)%s*" .. sep .. "%s*(.*)"
   for _, line in ipairs(lines) do
     for k, v in line:gmatch(pattern) do
       tbl[k] = tonumber(v) or v
