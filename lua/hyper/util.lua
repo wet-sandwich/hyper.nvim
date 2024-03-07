@@ -138,13 +138,23 @@ local function find_env_files()
   return paths
 end
 
+local function filter_params(params)
+  local filtered = params
+  for k, _ in pairs(params) do
+    if k:sub(1,1) == "#" then
+      filtered[k] = nil
+    end
+  end
+  return filtered
+end
+
 function M.http_request(opts)
   local raw = {"-w response_time=%{time_total}"}
 
   local env_lines = read_file(opts.env.selected)
 
   local filled_opts = substitute_envars({
-    query_params = opts.query_params,
+    query_params = filter_params(opts.query_params),
     headers = opts.headers,
     body = opts.body,
     url = opts.url,
