@@ -12,8 +12,8 @@ function M.setup(view)
     M:main_commands()
   end
 
-  if state.mode == "vars" then
-    M:vars_commands()
+  if state.mode == "env" then
+    M:env_commands()
   end
 end
 
@@ -97,7 +97,7 @@ function M:main_commands()
   end, "set request headers")
 
   self.view:on_key("E", function()
-    self.view.show("vars")
+    self.view.show("env")
   end, "open environment variables page")
 
   self.view:on_key("R", function()
@@ -112,7 +112,7 @@ function M:main_commands()
   end, "clear all")
 end
 
-function M:vars_commands()
+function M:env_commands()
   local state = self.view.state.get_state()
 
   self.view:on_key("B", function()
@@ -120,31 +120,40 @@ function M:vars_commands()
   end, "back to main page")
 
   self.view:on_key("S", function()
-    local vars = state.variables
-    Menu.popup_menu(vars.paths, {
+    local env = state.env
+
+    if next(env.available) == nil then
+      return
+    end
+
+    Menu.popup_menu(env.available, {
       title = "Select a file:",
       row = 0,
       col = Config.layout_config.col_width,
       width = self.view.win_opts.width - 2 * Config.layout_config.col_width,
-      height = #vars.paths,
+      height = #env.available,
       callback = function(selection)
-        vars.selection = vars.paths[selection]
-        self.view.state.set_state("variables", vars)
+        env.selected = env.available[selection]
+        self.view.state.set_state("env", env)
         return self.view:update()
       end,
     })
   end, "select env file")
 
   self.view:on_key("E", function()
-    local env_lines = vim.fn.readfile(state.variables.selection)
+    if state.env.selected == nil then
+      return
+    end
+
+    local env_lines = vim.fn.readfile(state.env.selected)
     Menu.entry(env_lines, {
-      title = state.variables.selection,
+      title = state.env.selected,
       row = 2,
       col = 0,
       width = self.view.win_opts.width - 2,
       height = self.view.win_opts.height - 4,
       callback = function(entry)
-        vim.fn.writefile(entry, state.variables.selection)
+        vim.fn.writefile(entry, state.env.selected)
         return self.view:update()
       end,
     })

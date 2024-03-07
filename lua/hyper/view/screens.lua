@@ -89,44 +89,51 @@ function M:main()
   end
 end
 
-function M:vars()
-  local vars = self.view.state.get_state("variables")
+function M:env()
+  Util.get_env_files(self.view.state)
+
+  local env = self.view.state.get_state("env")
   local col_width = Config.layout_config.col_width
 
-  if next(vars.paths) == nil then
-    vars.paths = Util.find_env_files()
-    if #vars.paths == 1 then
-      vars.selection = vars.paths[1]
-    end
-    self.view.state.set_state("variables", vars)
-  end
+  -- if next(env.available) == nil then
+  --   env.available = Util.find_env_files()
+  --   if #env.available == 1 then
+  --     env.selected = env.available[1]
+  --   end
+  --   self.view.state.set_state("env", env)
+  -- end
 
   local strings = {
     back = "[B]ack",
     select = "[S]elect File",
     edit = "[E]dit File",
+    nofiles = "No .env files found",
   }
 
   -- back, select file, edit file commands
-  self.view.render:append(table.concat({
-    strings.back,
-    string.rep(" ", col_width - #strings.back),
-    strings.select,
-    string.rep(" ", col_width - #strings.select),
-    strings.edit,
-  }))
+  local menu_tt = {}
+  table.insert(menu_tt, strings.back)
+  if next(env.available) ~= nil then
+    table.insert(menu_tt, string.rep(" ", col_width - #strings.back))
+    table.insert(menu_tt, strings.select)
+  end
+  if env.selected ~= nil then
+    table.insert(menu_tt, string.rep(" ", col_width - #strings.select))
+    table.insert(menu_tt, strings.edit)
+  end
+  self.view.render:append(table.concat(menu_tt))
 
   -- env file display
   self.view.render:append("")
-  if vars.selection ~= nil then
-    local env_lines = vim.fn.readfile(vars.selection)
-    self.view.render:append(vars.selection)
+  if env.selected ~= nil then
+    local env_lines = vim.fn.readfile(env.selected)
+    self.view.render:append(env.selected)
     self:separator("-")
     for _, line in ipairs(env_lines) do
       self.view.render:append(line)
     end
   else
-    self.view.render:append("No .env file selected")
+    self.view.render:append(strings.nofiles)
   end
 end
 

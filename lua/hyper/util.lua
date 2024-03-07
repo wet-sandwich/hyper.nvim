@@ -40,6 +40,13 @@ local function pretty_print(object, lines, depth)
   end
 end
 
+local function read_file(path)
+  if path == nil then
+    return {}
+  end
+  return vim.fn.readfile(path)
+end
+
 function M.pretty_format(object)
   local lines = {}
   pretty_print(object, lines)
@@ -120,9 +127,22 @@ local function substitute_envars(tt, variables)
   return new_tt
 end
 
+local function find_env_files()
+  local paths = vim.fs.find(function(name, _)
+    return name:match('^%.env.*') or name:match('.*%.env')
+  end, {
+      limit = 4,
+      type = 'file',
+    })
+
+  return paths
+end
+
 function M.http_request(opts)
   local raw = {"-w response_time=%{time_total}"}
-  local env_lines = vim.fn.readfile(opts.variables.selection)
+
+  local env_lines = read_file(opts.env.selected)
+
   local filled_opts = substitute_envars({
     query_params = opts.query_params,
     headers = opts.headers,
@@ -151,15 +171,29 @@ function M.ltrim(str)
   return str:match'^%s*(.*)'
 end
 
-function M.find_env_files()
-  local paths = vim.fs.find(function(name, _)
-    return name:match('^%.env.*') or name:match('.*%.env')
-  end, {
-      limit = 4,
-      type = 'file',
-    })
+function M.get_env_files(state)
+  local env_files = find_env_files()
+  local env = state.get_state("env")
 
-  return paths
+  if next(env_files) == nil then
+    return
+  end
+
+  env.available = env_files
+
+  if #env_files == 1 then
+    env.selected = env_files[1]
+    state.set_state("env", env)
+    return
+  end
+
+  for _, file in ipairs(env_files) do
+    if vim.fs.basename(file) == ".env" then
+      env.selected = file
+      state.set_state("env", env)
+      return
+    end
+  end
 end
 
 function M.find_collections()
