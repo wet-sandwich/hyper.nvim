@@ -2,6 +2,7 @@ local Float = require("hyper.view.float")
 local Render = require("hyper.view.render")
 local State = require("hyper.state")
 local Commands = require("hyper.view.commands")
+local Util = require("hyper.util")
 
 local M = {}
 
@@ -24,6 +25,8 @@ function M.create()
 
   self.state = State
   self.state.init()
+
+  Util.get_env_files(self.state)
 
   Float.init(self, {
     title = "Hyper",

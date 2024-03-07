@@ -8,9 +8,9 @@ local default_state = {
   query_params = {},
   body = {},
   headers = {},
-  variables = {
-    paths = {},
-    selection = nil,
+  env = {
+    available = {},
+    selected = nil,
   },
   -- collections = {},
 }
@@ -27,9 +27,9 @@ local example_state = {
   headers = {
     ["User-Agent"] = "{{user}}",
   },
-  variables = {
-    paths = {},
-    selection = nil,
+  env = {
+    available = {},
+    selected = nil,
   },
   -- collections = {},
 }

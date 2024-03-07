@@ -19,8 +19,8 @@ function M:update()
     self.screens:main()
   end
 
-  if mode == "vars" then
-    self.screens:vars()
+  if mode == "env" then
+    self.screens:env()
   end
 
   -- if mode == "collection" then
