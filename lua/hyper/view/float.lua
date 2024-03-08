@@ -1,3 +1,6 @@
+local Util = require("hyper.util")
+local Config = require("hyper.config")
+
 local M = {}
 
 setmetatable(M, {
@@ -12,20 +15,19 @@ function M.new(...)
 end
 
 function M:init(opts)
-  local w = vim.o.columns
-  local h = vim.o.lines
-  local mh = 40
-  local mv = 5
+  local win = Config.win
+  local w = Util.get_dimension(vim.o.columns, win.min_width, win.max_width, win.width_ratio)
+  local h = Util.get_dimension(vim.o.lines, win.min_height, win.max_height, win.height_ratio)
 
   self.opts = vim.deepcopy(opts)
 
   self.win_opts = {
     style = "minimal",
     relative = "editor",
-    width = w - 2*mh,
-    height = h - 2*mv,
-    row = mv,
-    col = mh,
+    width = w.dim,
+    height = h.dim,
+    row = h.pos - 2,
+    col = w.pos,
     border = "rounded",
     title = self.opts.title,
     title_pos = self.opts.title_pos,
