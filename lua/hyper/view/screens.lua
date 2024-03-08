@@ -17,7 +17,7 @@ function M:main()
   local strings = {
     method = "[M]ethod: ",
     url = "[U]rl: ",
-    query = "[Q]uery Params (%d)",
+    query = "[P]arams (%d)",
     body = "[B]ody",
     headers = "[H]eaders (%d)",
     envars = "[E]nv Variables",
