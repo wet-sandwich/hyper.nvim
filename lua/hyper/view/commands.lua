@@ -152,6 +152,7 @@ function M:env_commands()
       col = 0,
       width = self.view.win_opts.width - 2,
       height = self.view.win_opts.height - 4,
+      filetype = "sh",
       callback = function(entry)
         vim.fn.writefile(entry, state.env.selected)
         return self.view:update()
