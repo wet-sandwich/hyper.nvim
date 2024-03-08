@@ -49,7 +49,7 @@ function M:main_commands()
     })
   end, "enter URL")
 
-  self.view:on_key("Q", function()
+  self.view:on_key("P", function()
     Menu.entry(state.query_params, {
       title = "Query Parameters",
       row = 1,
