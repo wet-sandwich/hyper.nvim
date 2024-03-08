@@ -156,7 +156,7 @@ function M.http_request(opts)
   local filled_opts = substitute_envars({
     query_params = filter_params(opts.query_params),
     headers = opts.headers,
-    body = opts.body,
+    body = M.is_body_method(opts.method) and opts.body or {},
     url = opts.url,
   }, env_lines)
 
