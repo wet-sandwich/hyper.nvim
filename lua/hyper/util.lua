@@ -3,6 +3,18 @@ local uv = vim.loop
 
 local M = {}
 
+function M.get_dimension(d, min, max, ratio)
+  local dim = math.min(math.floor(d * ratio), max)
+
+  if d < min then
+    dim = d - 2
+  end
+
+  local pos = math.floor((d - dim) / 2)
+
+  return { dim = dim, pos = pos }
+end
+
 function M.is_body_method(method)
   local body_methods = {
     PUT = true,
