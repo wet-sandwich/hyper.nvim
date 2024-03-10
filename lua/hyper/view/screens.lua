@@ -90,7 +90,7 @@ function M:main()
 end
 
 function M:env()
-  Util.validate_env_files()
+  Util.validate_env_files(self.view.state)
   local env = self.view.state.get_state("env")
   local col_width = Config.layout_config.col_width
 

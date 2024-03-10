@@ -1,6 +1,5 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
-local State = require("hyper.state")
 
 local M = {}
 
@@ -219,8 +218,8 @@ function M.init_env_files(state)
   end
 end
 
-function M.validate_env_files()
-  local env = State.get_state("env")
+function M.validate_env_files(state)
+  local env = state.get_state("env")
   local env_files = find_env_files()
 
   if #env.available == #env_files then
@@ -230,13 +229,30 @@ function M.validate_env_files()
 
   for _, v in ipairs(env.available) do
     if v == env.selected then
-      State.set_state("env", env)
+      state.set_state("env", env)
       return
     end
   end
 
   env.selected = env.available[1]
-  State.set_state("env", env)
+  state.set_state("env", env)
+end
+
+function M.read_file(file)
+  if uv.fs_stat(file) == nil then
+    return ""
+  end
+
+  local f = assert(io.open(file, "r"))
+  local s = f:read("*all")
+  f:close()
+  return s
+end
+
+function M.write_file(file, data)
+  local f = assert(io.open(file, "w+"))
+  f:write(data)
+  f:close()
 end
 
 function M.find_collections()

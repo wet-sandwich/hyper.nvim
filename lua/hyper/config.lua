@@ -13,4 +13,8 @@ M.layout_config = {
   col_width = 25,
 }
 
+M.options = {
+  state = vim.fn.stdpath("state") .. "/hyper/state.json",
+}
+
 return M
