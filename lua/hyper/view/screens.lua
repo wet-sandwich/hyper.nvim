@@ -90,18 +90,9 @@ function M:main()
 end
 
 function M:env()
-  Util.get_env_files(self.view.state)
-
+  Util.validate_env_files()
   local env = self.view.state.get_state("env")
   local col_width = Config.layout_config.col_width
-
-  -- if next(env.available) == nil then
-  --   env.available = Util.find_env_files()
-  --   if #env.available == 1 then
-  --     env.selected = env.available[1]
-  --   end
-  --   self.view.state.set_state("env", env)
-  -- end
 
   local strings = {
     back = "[B]ack",
