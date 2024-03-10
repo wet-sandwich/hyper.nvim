@@ -1,5 +1,6 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
+local State = require("hyper.state")
 
 local M = {}
 
@@ -193,7 +194,7 @@ function M.ltrim(str)
   return str:match'^%s*(.*)'
 end
 
-function M.get_env_files(state)
+function M.init_env_files(state)
   local env_files = find_env_files()
   local env = state.get_state("env")
 
@@ -216,6 +217,26 @@ function M.get_env_files(state)
       return
     end
   end
+end
+
+function M.validate_env_files()
+  local env = State.get_state("env")
+  local env_files = find_env_files()
+
+  if #env.available == #env_files then
+    return
+  end
+  env.available = env_files
+
+  for _, v in ipairs(env.available) do
+    if v == env.selected then
+      State.set_state("env", env)
+      return
+    end
+  end
+
+  env.selected = env.available[1]
+  State.set_state("env", env)
 end
 
 function M.find_collections()

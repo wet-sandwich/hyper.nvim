@@ -26,7 +26,7 @@ function M.create()
   self.state = State
   self.state.init()
 
-  Util.get_env_files(self.state)
+  Util.init_env_files(self.state)
 
   Float.init(self, {
     title = "Hyper",
