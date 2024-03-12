@@ -59,7 +59,16 @@ function M.add_item(state)
 
   local id = Util.hash_http_request(request)
   if history.requests[id] ~= nil then
-    return
+    -- already exists in history, move to top of order array
+    for i, v in ipairs(history.order) do
+      if v == id then
+        if i == 1 then return end
+        table.remove(history.order, i)
+        table.insert(history.order, 1, id)
+        M.write()
+        return
+      end
+    end
   end
 
   history.requests[id] = json
