@@ -15,7 +15,6 @@ local default_state = {
     available = {},
     selected = nil,
   },
-  history = {},
   -- collections = {},
 }
 
@@ -35,7 +34,6 @@ local example_state = {
     available = {},
     selected = nil,
   },
-  history = {},
   -- collections = {},
 }
 

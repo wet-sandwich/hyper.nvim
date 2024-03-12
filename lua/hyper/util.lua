@@ -255,6 +255,35 @@ function M.write_file(file, data)
   f:close()
 end
 
+local function sort_keys(t)
+  local keys = {}
+  for k, _ in pairs(t) do
+    table.insert(keys, k)
+  end
+  table.sort(keys)
+  return keys
+end
+
+local function flatten_table(t)
+  local sorted_keys = sort_keys(t)
+  local str = ""
+  for _, k in ipairs(sorted_keys) do
+    str = str .. k .. t[k]
+  end
+  return str
+end
+
+function M.hash_http_request(req)
+  local t = {
+    req.method,
+    req.url,
+    flatten_table(req.query_params),
+    flatten_table(req.headers),
+    req.body and table.concat(req.body, "") or "",
+  }
+  return vim.fn.sha256(table.concat(t, ""))
+end
+
 function M.find_collections()
   local cwd = vim.fn.getcwd()
 

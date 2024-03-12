@@ -15,6 +15,8 @@ M.layout_config = {
 
 M.options = {
   state = vim.fn.stdpath("state") .. "/hyper/state.json",
+  history = vim.fn.stdpath("state") .. "/hyper/history.json",
+  max_history = 25,
 }
 
 return M

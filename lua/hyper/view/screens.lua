@@ -1,6 +1,7 @@
 local Text = require("hyper.view.text")
-local Config = require "hyper.config"
-local Util = require "hyper.util"
+local Config = require("hyper.config")
+local Util = require("hyper.util")
+local History = require("hyper.history")
 
 local M = {}
 
@@ -22,10 +23,11 @@ function M:main()
     headers = "[H]eaders (%d)",
     envars = "[E]nv Variables",
     request = "Make [R]equest",
-    clear_all = "[C]lear All",
+    clear_all = "[X] Clear All",
     response = "Response:",
     res_status = "STATUS %d",
     res_time = "TIME %dms",
+    history = "[S] History (%d)",
   }
 
   -- request method and url
@@ -56,6 +58,10 @@ function M:main()
     string.rep(" ", col_width - #headers),
     strings.envars,
   }))
+
+  --history
+  local history = string.format(strings.history, #History.order)
+  self.view.render:append(history)
 
   -- request and clear all commands
   self.view.render:append("")

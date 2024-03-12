@@ -1,6 +1,7 @@
 local Menu = require("hyper.view.menu")
 local Config = require("hyper.config")
 local Util = require("hyper.util")
+local History = require("hyper.history")
 
 local M = {}
 
@@ -103,6 +104,7 @@ function M:main_commands()
   self.view:on_key("R", function()
     local res = Util.http_request(state)
     self.view.state.set_state("res", res)
+    History.add_item(state)
     return self.view:update()
   end, "make request")
 
