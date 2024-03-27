@@ -45,6 +45,9 @@ function M.init()
 end
 
 function M.get_state(key)
+  if not vim.g.hyper then
+    M.read()
+  end
   if key then
     return vim.g.hyper[key]
   else

@@ -1,7 +1,16 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
+local Config = require("hyper.config")
 
 local M = {}
+
+function M.get_viewbox()
+  local width = math.floor(vim.o.columns * Config.viewbox.width)
+  local height = math.floor(vim.o.lines * Config.viewbox.height)
+  local col = math.floor((vim.o.columns - width) / 2)
+  local row = math.floor((vim.o.lines - height) / 2) - 2
+  return width, height, row, col
+end
 
 function M.get_dimension(d, min, max, ratio)
   local dim = math.min(math.floor(d * ratio), max)

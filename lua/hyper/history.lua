@@ -48,15 +48,6 @@ function M.add_item(state)
     request.body = nil
   end
 
-  local json = nil
-  pcall(function()
-    json = vim.json.encode(request)
-  end)
-  if json == nil then
-    error("Error encoding request to JSON")
-    return
-  end
-
   local id = Util.hash_http_request(request)
   if history.requests[id] ~= nil then
     -- already exists in history, move to top of order array
@@ -71,7 +62,7 @@ function M.add_item(state)
     end
   end
 
-  history.requests[id] = json
+  history.requests[id] = request
   if history.order ~= nil then
     if #history.order == Config.options.max_history then
       local last_id = table.remove(history.order)

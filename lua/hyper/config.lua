@@ -9,6 +9,11 @@ M.win = {
   height_ratio = 0.8,
 }
 
+M.viewbox = {
+  width = 0.8,
+  height = 0.8,
+}
+
 M.layout_config = {
   col_width = 25,
 }
