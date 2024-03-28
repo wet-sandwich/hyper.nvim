@@ -202,49 +202,40 @@ function M.ltrim(str)
   return str:match'^%s*(.*)'
 end
 
-function M.init_env_files(state)
+function M.update_env_files(State)
+  local env = State.get_state("env")
   local env_files = find_env_files()
-  local env = state.get_state("env")
 
+  -- check if env files are (still) there
   if next(env_files) == nil then
+    -- if files no longer exist then reset env state
+    if #env.available > 0 then
+      env.vailable = {}
+      env.selected = nil
+      State.set_state("env", env)
+    end
     return
   end
 
   env.available = env_files
 
-  if #env_files == 1 then
-    env.selected = env_files[1]
-    state.set_state("env", env)
+  if env.selected then
+    State.set_state("env", env)
     return
   end
 
-  for _, file in ipairs(env_files) do
-    if vim.fs.basename(file) == ".env" then
-      env.selected = file
-      state.set_state("env", env)
-      return
-    end
-  end
-end
-
-function M.validate_env_files(state)
-  local env = state.get_state("env")
-  local env_files = find_env_files()
-
-  if #env.available == #env_files then
-    return
-  end
-  env.available = env_files
-
-  for _, v in ipairs(env.available) do
-    if v == env.selected then
-      state.set_state("env", env)
-      return
+  if #env_files > 1 then
+    for _, file in ipairs(env_files) do
+      if vim.fs.basename(file) == ".env" then
+        env.selected = file
+        State.set_state("env", env)
+        return
+      end
     end
   end
 
-  env.selected = env.available[1]
-  state.set_state("env", env)
+  env.selected = env_files[1]
+  State.set_state("env", env)
 end
 
 function M.read_file(file)

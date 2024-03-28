@@ -1,33 +1,33 @@
 local RequestScreen = require("hyper.view.screens.request")
 local HistoryScreen = require("hyper.view.screens.history")
 local VariablesScreen = require("hyper.view.screens.variables")
-local State = require("hyper.state")
+-- local State = require("hyper.state")
+local State = require("hyper.state2")
+local Util = require("hyper.util")
 
 local M = {}
 M.screen = nil
 
 State.init()
 
-function M.visible()
-  return M.screen and M.screen.isVisible
-end
-
 function M.show()
-  M.screen = M.visible() and M.screen or RequestScreen
-  M.screen:hide()
+  if M.screen and M.screen.isVisible then
+    M.screen:hide()
+  end
 
   local mode = State.get_state("mode")
+  Util.update_env_files(State)
 
   if mode == "main" then
-    M.screen = RequestScreen
+    M.screen = RequestScreen.new(State)
   end
 
   if mode == "history" then
-    M.screen = HistoryScreen
+    M.screen = HistoryScreen.new(State)
   end
 
   if mode == "variables" then
-    M.screen = VariablesScreen
+    M.screen = VariablesScreen.new(State)
   end
 
   M.screen:display()

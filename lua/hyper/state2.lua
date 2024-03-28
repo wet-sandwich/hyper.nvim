@@ -6,9 +6,9 @@ local default_state = {
   mode = "main",
   url = "",
   method = "GET",
-  res = {},
+  res = nil,
   query_params = {},
-  body = {},
+  body = {"{}"},
   headers = {},
   env = {
     available = {},
@@ -24,7 +24,11 @@ function M.init()
 end
 
 function M.get_state(key)
-  return data[key]
+  if key then
+    return data[key]
+  else
+    return data
+  end
 end
 
 function M.set_state(key, value)

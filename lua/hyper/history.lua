@@ -40,7 +40,7 @@ function M.add_item(state)
     return
   end
 
-  local request = state
+  local request = vim.deepcopy(state)
   request.env = nil
   request.res = nil
   request.mode = nil
