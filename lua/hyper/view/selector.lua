@@ -31,10 +31,6 @@ function Selector:create_window()
   end
 end
 
-function Selector:sync_selection(val)
-  self.selection = val
-end
-
 function Selector:update_highlight()
   vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
     end_col = self.width,

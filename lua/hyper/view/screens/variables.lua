@@ -1,6 +1,5 @@
-local Text = require("hyper.view.text2")
 local File = require("hyper.view.file-preview")
-local Selector = require("hyper.view.selector")
+local Radio = require("hyper.view.radio")
 local Screen = require("hyper.view.screen")
 local Util = require("hyper.util")
 
@@ -22,22 +21,13 @@ function M.new(State)
     return 0
   end
 
-  local function create_list()
-    local list = Text.new()
-    for _, path in ipairs(env.available) do
-      path = path .. string.rep(" ", list_width - #path)
-      list:append(path)
-    end
-    return list
-  end
-
-  local env_file_selector = Selector.new({
+  local env_file_selector = Radio.new({
     title = "Available Files",
     row = row,
     col = col,
     width = list_width,
     height = height,
-    content = create_list,
+    options = env.available,
   }, sync_selection)
 
   local preview_win = File.new({
@@ -64,16 +54,22 @@ function M.new(State)
 
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()
-    env_file_selector:select_next()
-    env.selected = env.available[env_file_selector.selection + 1]
-    State.set_state("env", env)
-    preview_win:set_file(env.selected)
+    env_file_selector:hover_next()
+    local file = env.available[env_file_selector.hover + 1]
+    preview_win:set_file(file)
     preview_win:render()
   end})
 
   preview_win:add_keymap({"n", "<c-p>", function()
     preview_win:save()
-    env_file_selector:select_previous()
+    env_file_selector:hover_previous()
+    local file = env.available[env_file_selector.hover + 1]
+    preview_win:set_file(file)
+    preview_win:render()
+  end})
+
+  preview_win:add_keymap({"n", "<Tab>", function()
+    env_file_selector:select()
     env.selected = env.available[env_file_selector.selection + 1]
     State.set_state("env", env)
     preview_win:set_file(env.selected)
