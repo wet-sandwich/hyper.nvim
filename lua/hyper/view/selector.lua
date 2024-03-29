@@ -23,10 +23,12 @@ function Selector:create_window()
     end_col = self.width,
     hl_group = "PmenuSel",
   })
-  self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
-    virt_text = {{"↵", "PmenuSel"}},
-    virt_text_pos = "overlay",
-  })
+  if self.icon then
+    self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
+      virt_text = {{self.icon, "PmenuSel"}},
+      virt_text_pos = "overlay",
+    })
+  end
 end
 
 function Selector:sync_selection(val)
@@ -39,11 +41,13 @@ function Selector:update_highlight()
     hl_group = "PmenuSel",
     id = self.hl_extid,
   })
-  vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
-    virt_text = {{"↵", "PmenuSel"}},
-    virt_text_pos = "overlay",
-    id = self.vt_extid,
-  })
+  if self.icon then
+    vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
+      virt_text = {{self.icon, "PmenuSel"}},
+      virt_text_pos = "overlay",
+      id = self.vt_extid,
+    })
+  end
 end
 
 function Selector:select_next()

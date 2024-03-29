@@ -25,6 +25,7 @@ function M.new(State)
   local function create_list()
     local list = Text.new()
     for _, path in ipairs(env.available) do
+      path = path .. string.rep(" ", list_width - #path)
       list:append(path)
     end
     return list

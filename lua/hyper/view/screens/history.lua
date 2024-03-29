@@ -29,6 +29,7 @@ function M.new(State)
     width = list_width,
     height = height,
     content = create_list,
+    icon = "↵",
   })
 
   local function create_preview()
