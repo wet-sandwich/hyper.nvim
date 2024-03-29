@@ -18,14 +18,14 @@ Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```viml
 Plug 'nvim-lua/plenary.nvim'
-Plug 'wet-sandwich/hyper.nvim', { 'tag': '0.1.1' }
+Plug 'wet-sandwich/hyper.nvim', { 'tag': '0.1.2' }
 ```
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
 use {
-  'wet-sandwich/hyper.nvim', tag = '0.1.1',
+  'wet-sandwich/hyper.nvim', tag = '0.1.2',
   requires = { {'nvim-lua/plenary.nvim'} }
 }
 ```
@@ -34,7 +34,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
-  'wet-sandwich/hyper.nvim', tag = '0.1.1',
+  'wet-sandwich/hyper.nvim', tag = '0.1.2',
   dependencies = { 'nvim-lua/plenary.nvim' }
 }
 ```
