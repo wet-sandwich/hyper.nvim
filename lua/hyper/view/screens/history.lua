@@ -16,7 +16,7 @@ function M.new(State)
     for _, id in ipairs(History.order) do
       local req = History.requests[id]
       local str = req.method .. " " .. req.url
-      str = str .. string.rep(" ", list_width - 1 - #str) .. "↵"
+      str = str .. string.rep(" ", list_width - #str)
       list:append(str)
     end
     return list
