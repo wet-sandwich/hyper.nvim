@@ -67,12 +67,12 @@ function M.pretty_format(object)
 end
 
 function M.parse_response_body(body_str)
-  local i = string.find(body_str, "} ")
+  local i = string.find(body_str, "}%s+response_time=")
   local body = vim.json.decode(string.sub(body_str, 1, i))
 
-  local write_out = string.sub(body_str, i+2, -1)
+  local write_out = string.sub(body_str, i+1, -1)
   local extras = {}
-  for k, v in string.gmatch(write_out, "(.+)=(.+)") do
+  for k, v in string.gmatch(write_out, "(%S+)=(%S+)") do
     extras[k] = tonumber(v) or v
   end
   return body, extras
