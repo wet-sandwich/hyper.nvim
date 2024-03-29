@@ -5,10 +5,8 @@ local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
 local Selector = {}
 Selector.__index = Selector
 
--- function Selector.new(opts, initial)
 function Selector.new(opts, syncSelection)
   local float = Float.new(opts)
-  -- float.selection = initial or 0
   float.syncSelection = syncSelection
   setmetatable(float, { __index = setmetatable(Selector, { __index = Float }) })
   return float
@@ -21,7 +19,10 @@ function Selector:create_window()
   else
     self.selection = 0
   end
-  self:update_highlight()
+  self.extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
+    end_col = self.width + 2,
+    hl_group = "PmenuSel",
+  })
 end
 
 function Selector:sync_selection(val)
@@ -29,8 +30,11 @@ function Selector:sync_selection(val)
 end
 
 function Selector:update_highlight()
-  vim.api.nvim_buf_clear_namespace(self.buf, ns_hyper_selection, 0, -1)
-  vim.api.nvim_buf_add_highlight(self.buf, ns_hyper_selection, "PmenuSel", self.selection, 0, -1)
+  vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
+    end_col = self.width + 2,
+    hl_group = "PmenuSel",
+    id = self.extid,
+  })
 end
 
 function Selector:select_next()
