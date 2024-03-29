@@ -12,12 +12,10 @@ local M = {}
 
 function M.new(State)
   local function create_list()
-    local list = Text.new()
+    local list = {}
     for _, id in ipairs(History.order) do
       local req = History.requests[id]
-      local str = req.method .. " " .. req.url
-      str = str .. string.rep(" ", list_width - #str)
-      list:append(str)
+      table.insert(list, req.method .. " " .. req.url)
     end
     return list
   end
@@ -28,8 +26,7 @@ function M.new(State)
     col = col,
     width = list_width,
     height = height,
-    content = create_list,
-    icon = "↵",
+    options = create_list(),
   })
 
   local function create_preview()
