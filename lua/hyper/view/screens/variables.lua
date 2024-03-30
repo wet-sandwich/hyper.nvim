@@ -22,13 +22,21 @@ function M.new(State)
     return 0
   end
 
+  local function relative_paths()
+    local paths = {}
+    for _, path in ipairs(env.available) do
+      table.insert(paths, vim.fn.fnamemodify(path, ":."))
+    end
+    return paths
+  end
+
   local env_file_selector = Radio.new({
     title = "Available Files",
     row = row,
     col = col,
     width = list_width,
     height = height,
-    options = env.available,
+    options = relative_paths(),
   }, sync_selection)
 
   local preview_win = File.new({
