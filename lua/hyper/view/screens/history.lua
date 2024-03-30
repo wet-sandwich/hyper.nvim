@@ -96,6 +96,8 @@ function M.new(State)
   end})
 
   preview_win:add_keymap({"n", "<CR>", function()
+    if #History.order == 0 then return end
+
     local id = History.order[list_win.selection + 1]
     local request = History.requests[id]
 

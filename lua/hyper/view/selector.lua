@@ -8,6 +8,7 @@ Selector.__index = Selector
 
 function Selector.new(opts)
   local float = Float.new(opts)
+  float.options = opts.options or {}
   float.selection = 0
   float.action_icon = "↵"
   setmetatable(float, { __index = setmetatable(Selector, { __index = Float }) })
@@ -17,6 +18,8 @@ end
 function Selector:create_window()
   self:_format_list()
   Float.create_window(self)
+
+  if #self.options == 0 then return end
 
   self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
     end_col = self.width,

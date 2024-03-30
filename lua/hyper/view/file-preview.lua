@@ -15,11 +15,13 @@ function File:set_file(path)
 end
 
 function File:render()
+  if self.path == nil then return end
   self.content = vim.fn.readfile(self.path)
   Float.render(self)
 end
 
 function File:save()
+  if self.path == nil then return end
   local content = vim.api.nvim_buf_get_lines(self.buf, 0, -1, false)
   vim.fn.writefile(content, self.path)
 end

@@ -8,6 +8,7 @@ Radio.__index = Radio
 
 function Radio.new(opts, syncSelection)
   local float = Float.new(opts)
+  float.options = opts.options or {}
   float.syncSelection = syncSelection
   float.selected_icon = "✔"
   float.action_icon = "⇥"
@@ -26,6 +27,8 @@ function Radio:create_window()
   end
 
   self.hover = self.selection
+
+  if #self.options == 0 then return end
 
   self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.hover, 0, {
     end_col = self.width,

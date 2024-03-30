@@ -10,6 +10,7 @@ local M = {}
 
 function M.new(State)
   local env = State.get_state("env")
+
   local function sync_selection()
     if env.selected ~= nil then
       for i, path in ipairs(env.available) do
@@ -69,6 +70,8 @@ function M.new(State)
   end})
 
   preview_win:add_keymap({"n", "<Tab>", function()
+    if #env.available == 0 then return end
+
     env_file_selector:select()
     env.selected = env.available[env_file_selector.selection + 1]
     State.set_state("env", env)
