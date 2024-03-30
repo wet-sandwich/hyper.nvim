@@ -41,6 +41,7 @@ function M.add_item(state)
   end
 
   local request = vim.deepcopy(state)
+  request.status = request.res.status
   request.env = nil
   request.res = nil
   request.mode = nil
@@ -48,20 +49,25 @@ function M.add_item(state)
     request.body = nil
   end
 
+  local timestamp = vim.fn.strftime("%b %d %Y %T")
   local id = Util.hash_http_request(request)
   if history.requests[id] ~= nil then
-    -- already exists in history, move to top of order array
-    for i, v in ipairs(history.order) do
-      if v == id then
-        if i == 1 then return end
-        table.remove(history.order, i)
-        table.insert(history.order, 1, id)
+    -- request already exists in history, move to top of order array
+    for order, existing_id in ipairs(history.order) do
+      if existing_id == id then
+        if order ~= 1 then
+          table.remove(history.order, order)
+          table.insert(history.order, 1, id)
+        end
+        history.requests[id].timestamp = timestamp
+        history.requests[id].status = request.status
         M.write()
         return
       end
     end
   end
 
+  request.timestamp = timestamp
   history.requests[id] = request
   if history.order ~= nil then
     if #history.order == Config.options.max_history then
