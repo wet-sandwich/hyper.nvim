@@ -3,13 +3,15 @@ local Util = require("hyper.util")
 
 local M = {}
 
+local data = {}
+
 local default_state = {
   mode = "main",
   url = "",
   method = "GET",
-  res = {},
+  res = nil,
   query_params = {},
-  body = {},
+  body = {"{}"},
   headers = {},
   env = {
     available = {},
@@ -18,52 +20,32 @@ local default_state = {
   -- collections = {},
 }
 
-local example_state = {
-  mode = "main",
-  url = "https://echo.zuplo.io",
-  method = "POST",
-  res = {},
-  query_params = {
-    param = "value",
-  },
-  body = {"{","  \"my_var\": \"{{my_var}}\"","}"},
-  headers = {
-    ["User-Agent"] = "{{user}}",
-  },
-  env = {
-    available = {},
-    selected = nil,
-  },
-  -- collections = {},
-}
-
 function M.init()
-  if vim.g.hyper then
+  if next(data) ~= nil then
     return
   end
   M.read()
 end
 
 function M.get_state(key)
-  if not vim.g.hyper then
+  if next(data) == nil then
     M.read()
   end
   if key then
-    return vim.g.hyper[key]
+    return data[key]
   else
-    return vim.g.hyper
+    return data
   end
 end
 
 function M.set_state(key, value)
-  local state = vim.g.hyper
-  state[key] = value
-  vim.g.hyper = state
+  data[key] = value
   M.write()
 end
 
 function M.clear_state()
-  vim.g.hyper = default_state
+  data = vim.deepcopy(default_state)
+  M.write()
 end
 
 function M.read()
@@ -71,16 +53,17 @@ function M.read()
   if pcall(function()
     saved_state = vim.json.decode(Util.read_file(Config.options.state))
   end) then
-    vim.g.hyper = saved_state
+    data = saved_state
   else
-    vim.g.hyper = example_state
+    data = default_state
   end
 end
 
 function M.write()
   vim.fn.mkdir(vim.fn.fnamemodify(Config.options.state, ":p:h"), "p")
-  local state = vim.g.hyper
+  local state = vim.deepcopy(data)
   state.res = nil
+  state.mode = nil
   Util.write_file(Config.options.state, vim.json.encode(state))
 end
 

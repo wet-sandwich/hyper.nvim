@@ -1,8 +1,7 @@
 local RequestScreen = require("hyper.view.screens.request")
 local HistoryScreen = require("hyper.view.screens.history")
 local VariablesScreen = require("hyper.view.screens.variables")
--- local State = require("hyper.state")
-local State = require("hyper.state2")
+local State = require("hyper.state")
 local Util = require("hyper.util")
 
 local M = {}
@@ -15,7 +14,7 @@ function M.show()
     M.screen:hide()
   end
 
-  local mode = State.get_state("mode")
+  local mode = State.get_state("mode") or "main"
   Util.update_env_files(State)
 
   if mode == "main" then
