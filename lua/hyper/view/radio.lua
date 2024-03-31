@@ -38,10 +38,7 @@ function Radio:create_window()
     virt_text = {{self.selected_icon, "PmenuSel"}},
     virt_text_pos = "overlay",
   })
-  self.tab_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.hover, self.width-1, {
-    virt_text = {{self.action_icon, "PmenuSel"}},
-    virt_text_pos = "overlay",
-  })
+  self.action_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.hover, 0, {})
 end
 
 function Radio:update_highlight()
@@ -58,10 +55,11 @@ function Radio:update_highlight()
     id = self.check_extid,
   })
 
-  vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.hover, self.width-1, {
-    virt_text = {{self.action_icon, "PmenuSel"}},
+  local vt = self.hover ~= self.selection and self.action_icon or ""
+  vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.hover, 0, {
+    virt_text = {{vt, "PmenuSel"}},
     virt_text_pos = "overlay",
-    id = self.tab_extid,
+    id = self.action_extid,
   })
 end
 
