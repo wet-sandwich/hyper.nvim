@@ -30,7 +30,7 @@ function M.new(State)
     return paths
   end
 
-  local env_file_selector = Radio.new({
+  local file_picker = Radio.new({
     title = "Available Files",
     row = row,
     col = col,
@@ -53,26 +53,27 @@ function M.new(State)
     preview_win:set_file(env.selected)
   end
 
+  local VariablesScreen = Screen.new({ file_picker, preview_win })
+
   preview_win:add_autocmd("BufLeave", {
     callback = function()
       preview_win:save()
+      VariablesScreen:hide()
     end
   })
 
-  local VariablesScreen = Screen.new({ env_file_selector, preview_win })
-
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()
-    env_file_selector:hover_next()
-    local file = env.available[env_file_selector.hover + 1]
+    file_picker:hover_next()
+    local file = env.available[file_picker.hover + 1]
     preview_win:set_file(file)
     preview_win:render()
   end})
 
   preview_win:add_keymap({"n", "<c-p>", function()
     preview_win:save()
-    env_file_selector:hover_previous()
-    local file = env.available[env_file_selector.hover + 1]
+    file_picker:hover_previous()
+    local file = env.available[file_picker.hover + 1]
     preview_win:set_file(file)
     preview_win:render()
   end})
@@ -80,8 +81,8 @@ function M.new(State)
   preview_win:add_keymap({"n", "<Tab>", function()
     if #env.available == 0 then return end
 
-    env_file_selector:select()
-    env.selected = env.available[env_file_selector.selection + 1]
+    file_picker:select()
+    env.selected = env.available[file_picker.selection + 1]
     State.set_state("env", env)
     preview_win:set_file(env.selected)
     preview_win:render()

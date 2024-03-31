@@ -6,9 +6,6 @@ local Config = require("hyper.config")
 local Util = require("hyper.util")
 local History = require("hyper.history")
 
-local col_width = Config.layout_config.col_width
-local width, height, row, col = Util.get_viewbox()
-
 local strings = {
   method = "[M]ethod: ",
   url = "[U]rl: ",
@@ -27,6 +24,9 @@ local strings = {
 local M = {}
 
 function M.new(State)
+
+  local col_width = Config.layout_config.col_width
+  local width, height, row, col = Util.get_viewbox()
 
   local function create_menu()
     local state = State.get_state()
@@ -103,122 +103,124 @@ function M.new(State)
 
   -- [[ Setup Windows ]]
 
-  local req = Window.new({
+  local req_height = 6
+  local request_win = Window.new({
     title = "Request",
     row = row,
     col = col,
     width = width,
-    height = 6,
+    height = req_height,
     content = create_menu,
   })
 
-  local res = Window.new({
+  local res_height = height - request_win.height - 2
+
+  local response_win = Window.new({
     title = "Response",
-    row = req.row + req.height + 2,
+    row = request_win.row + request_win.height + 2,
     col = col,
     width = width,
-    height = height - req.height - 2,
+    height = res_height,
     enter = true,
     content = create_http_response,
   })
 
-  local RequestScreen = Screen.new({ req, res })
+  local RequestScreen = Screen.new({ request_win, response_win })
+
+  response_win:add_autocmd("BufLeave", {
+    callback = function()
+      RequestScreen:hide()
+    end
+  })
 
   -- [[ Setup Keymaps ]]
 
-  res:add_keymap({"n", "M", function()
+  response_win:add_keymap({"n", "M", function()
     local methods = {"GET", "PUT", "POST", "PATCH", "DELETE"}
-    Menu.popup_menu(methods, {
+    Menu.select_menu(methods, {
       title = "Method",
-      row = 0,
+      width = 30,
+      row = -req_height - 2,
       col = 0,
-      width = 15,
-      height = #methods,
       callback = function(selection)
         State.set_state("method", methods[selection])
-        req:render()
+        request_win:render()
       end,
     })
   end})
 
-  res:add_keymap({"n", "U", function()
+  response_win:add_keymap({"n", "U", function()
     local state = State.get_state()
     Menu.entry(state.url, {
-      title = "URL",
-      row = 0,
+      title = "URL ↵ ",
+      row = -req_height - 2,
       col = Config.layout_config.col_width,
       width = width - 2 * Config.layout_config.col_width,
       submit_in_insert = true,
       callback = function(entry)
         State.set_state("url", entry[1])
-        req:render()
+        request_win:render()
       end,
     })
   end})
 
-  res:add_keymap({"n", "P", function()
+  response_win:add_keymap({"n", "P", function()
     local state = State.get_state()
     Menu.entry(state.query_params, {
       title = "Query Parameters",
-      row = 1,
-      col = 0,
-      width = 40,
-      height = 20,
+      width = width,
+      height = res_height,
       filetype = "sh",
       callback = function(entry)
         State.set_state("query_params", Util.lines_to_kv(entry, "="))
-        req:render()
+        request_win:render()
       end,
     })
   end})
 
-  res:add_keymap({"n", "B", function()
+  response_win:add_keymap({"n", "B", function()
     local state = State.get_state()
     if Util.is_body_method(state.method) then
       Menu.entry(state.body, {
         title = "Body",
-        row = 1,
-        col = Config.layout_config.col_width,
-        width = width - 2 * Config.layout_config.col_width,
-        height = height - 4,
+        width = width,
+        height = res_height,
         filetype = "json",
         callback = function(entry)
           State.set_state("body", entry)
-          req:render()
+          request_win:render()
         end,
       })
     end
   end})
 
-  res:add_keymap({"n", "H", function()
+  response_win:add_keymap({"n", "H", function()
     local state = State.get_state()
     Menu.entry(state.headers, {
       title = "Headers",
-      row = 2,
-      col = 0,
-      width = 40,
-      height = 20,
+      width = width,
+      height = res_height,
       separator = ": ",
       callback = function(entry)
         State.set_state("headers", Util.lines_to_kv(entry, ":"))
-        req:render()
+        request_win:render()
       end,
     })
   end})
 
-  res:add_keymap({"n", "X", function()
+  response_win:add_keymap({"n", "X", function()
     State.clear_state()
-    req:render()
-    res:render()
+    request_win:render()
+    response_win:render()
   end})
 
-  res:add_keymap({"n", "R", function()
+  response_win:add_keymap({"n", "R", function()
     local state = State.get_state()
     local response = Util.http_request(state)
     State.set_state("res", response)
     History.add_item(state)
-    res:render()
-    req:render()
+    response_win:render()
+    request_win:render()
   end})
 
   return RequestScreen

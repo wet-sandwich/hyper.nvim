@@ -85,6 +85,12 @@ function M.new(State)
 
   local HistoryScreen = Screen.new({ list_win, preview_win })
 
+  preview_win:add_autocmd("BufLeave", {
+    callback = function()
+      HistoryScreen:hide()
+    end
+  })
+
   preview_win:add_keymap({"n", "<c-n>", function()
     list_win:select_next()
     preview_win:render()
