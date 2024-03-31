@@ -1,4 +1,4 @@
-local File = require("hyper.view.file-preview")
+local File = require("hyper.view.file")
 local Radio = require("hyper.view.radio")
 local Screen = require("hyper.view.screen")
 local Util = require("hyper.util")

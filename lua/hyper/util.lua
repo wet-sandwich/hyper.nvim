@@ -284,44 +284,44 @@ function M.hash_http_request(req)
   return vim.fn.sha256(table.concat(t, ""))
 end
 
-function M.find_collections()
-  local cwd = vim.fn.getcwd()
-
-  local paths = vim.fs.find(function(name, path)
-    return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
-  end, {
-      limit = math.huge,
-      type = 'file',
-    })
-
-  local collections = {}
-  for _, path in ipairs(paths) do
-    local stat = uv.fs_stat(path)
-    local mtime = stat and stat.mtime.sec or os.time()
-
-    collections[path] = {
-      last_modified = mtime,
-      data = {},
-    }
-  end
-
-  return collections
-end
-
-function M.load_collections(existing, found)
-  for k, v in pairs(found) do
-    if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
-      local cfile = vim.fn.readfile(k)
-      local cstring = table.concat(cfile, "")
-      local ctable = vim.json.decode(cstring)
-      existing[k] = {
-        last_modified = v["last_modified"],
-        data = ctable,
-      }
-    end
-  end
-
-  return existing
-end
+-- function M.find_collections()
+--   local cwd = vim.fn.getcwd()
+--
+--   local paths = vim.fs.find(function(name, path)
+--     return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
+--   end, {
+--       limit = math.huge,
+--       type = 'file',
+--     })
+--
+--   local collections = {}
+--   for _, path in ipairs(paths) do
+--     local stat = uv.fs_stat(path)
+--     local mtime = stat and stat.mtime.sec or os.time()
+--
+--     collections[path] = {
+--       last_modified = mtime,
+--       data = {},
+--     }
+--   end
+--
+--   return collections
+-- end
+--
+-- function M.load_collections(existing, found)
+--   for k, v in pairs(found) do
+--     if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
+--       local cfile = vim.fn.readfile(k)
+--       local cstring = table.concat(cfile, "")
+--       local ctable = vim.json.decode(cstring)
+--       existing[k] = {
+--         last_modified = v["last_modified"],
+--         data = ctable,
+--       }
+--     end
+--   end
+--
+--   return existing
+-- end
 
 return M

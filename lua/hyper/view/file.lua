@@ -1,4 +1,4 @@
-local Float = require("hyper.view.float2")
+local Float = require("hyper.view.float")
 
 local File = {}
 File.__index = File

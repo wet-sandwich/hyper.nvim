@@ -1,5 +1,5 @@
-local Text = require("hyper.view.text2")
-local Window = require("hyper.view.float2")
+local Text = require("hyper.view.text")
+local Window = require("hyper.view.float")
 local Screen = require("hyper.view.screen")
 local Menu = require("hyper.view.menu")
 local Config = require("hyper.config")
@@ -27,9 +27,9 @@ local strings = {
 local M = {}
 
 function M.new(State)
-  local state = State.get_state()
 
   local function create_menu()
+    local state = State.get_state()
     local menu = Text.new()
 
     -- method and url
@@ -142,6 +142,7 @@ function M.new(State)
   end})
 
   res:add_keymap({"n", "U", function()
+    local state = State.get_state()
     Menu.entry(state.url, {
       title = "URL",
       row = 0,
@@ -156,6 +157,7 @@ function M.new(State)
   end})
 
   res:add_keymap({"n", "P", function()
+    local state = State.get_state()
     Menu.entry(state.query_params, {
       title = "Query Parameters",
       row = 1,
@@ -171,6 +173,7 @@ function M.new(State)
   end})
 
   res:add_keymap({"n", "B", function()
+    local state = State.get_state()
     if Util.is_body_method(state.method) then
       Menu.entry(state.body, {
         title = "Body",
@@ -188,6 +191,7 @@ function M.new(State)
   end})
 
   res:add_keymap({"n", "H", function()
+    local state = State.get_state()
     Menu.entry(state.headers, {
       title = "Headers",
       row = 2,
@@ -204,10 +208,12 @@ function M.new(State)
 
   res:add_keymap({"n", "X", function()
     State.clear_state()
-    req:update(create_menu())
+    req:render()
+    res:render()
   end})
 
   res:add_keymap({"n", "R", function()
+    local state = State.get_state()
     local response = Util.http_request(state)
     State.set_state("res", response)
     History.add_item(state)

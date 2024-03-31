@@ -35,4 +35,8 @@ function M.set_state(key, value)
   data[key] = value
 end
 
+function M.clear_state()
+  data = default_state
+end
+
 return M

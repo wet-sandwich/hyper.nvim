@@ -1,5 +1,5 @@
-local Float = require("hyper.view.float2")
-local Text = require("hyper.view.text2")
+local Float = require("hyper.view.float")
+local Text = require("hyper.view.text")
 
 local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
 
@@ -7,12 +7,12 @@ local Selector = {}
 Selector.__index = Selector
 
 function Selector.new(opts)
-  local float = Float.new(opts)
-  float.options = opts.options or {}
-  float.selection = 0
-  float.action_icon = "↵"
-  setmetatable(float, { __index = setmetatable(Selector, { __index = Float }) })
-  return float
+  local self = Float.new(opts)
+  self.options = opts.options or {}
+  self.selection = 0
+  self.action_icon = "↵"
+  setmetatable(self, { __index = setmetatable(Selector, { __index = Float }) })
+  return self
 end
 
 function Selector:create_window()

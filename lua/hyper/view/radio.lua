@@ -1,5 +1,5 @@
-local Float = require("hyper.view.float2")
-local Text = require("hyper.view.text2")
+local Float = require("hyper.view.float")
+local Text = require("hyper.view.text")
 
 local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
 
@@ -7,13 +7,13 @@ local Radio = {}
 Radio.__index = Radio
 
 function Radio.new(opts, syncSelection)
-  local float = Float.new(opts)
-  float.options = opts.options or {}
-  float.syncSelection = syncSelection
-  float.selected_icon = "✔"
-  float.action_icon = "⇥"
-  setmetatable(float, { __index = setmetatable(Radio, { __index = Float }) })
-  return float
+  local self = Float.new(opts)
+  self.options = opts.options or {}
+  self.syncSelection = syncSelection
+  self.selected_icon = "✔"
+  self.action_icon = "⇥"
+  setmetatable(self, { __index = setmetatable(Radio, { __index = Float }) })
+  return self
 end
 
 function Radio:create_window()

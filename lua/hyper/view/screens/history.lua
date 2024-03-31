@@ -1,5 +1,5 @@
-local Text = require("hyper.view.text2")
-local Float = require("hyper.view.float2")
+local Text = require("hyper.view.text")
+local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
 local Util = require("hyper.util")

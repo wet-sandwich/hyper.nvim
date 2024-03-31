@@ -1,97 +1,91 @@
-local Util = require("hyper.util")
-local Config = require("hyper.config")
+local Float = {}
+Float.__index = Float
 
-local M = {}
-
-setmetatable(M, {
-  __call = function(_, ...)
-    return M.new(...)
-  end,
-})
-
-function M.new(...)
-  local self = setmetatable({}, { __index = M })
-  return self:init()
+function Float.new(opts)
+  opts.buf = 0
+  opts.win = 0
+  opts.keymaps = {}
+  opts.autocmds = {}
+  setmetatable(opts, Float)
+  return opts
 end
 
-function M:init(opts)
-  local win = Config.win
-  local w = Util.get_dimension(vim.o.columns, win.min_width, win.max_width, win.width_ratio)
-  local h = Util.get_dimension(vim.o.lines, win.min_height, win.max_height, win.height_ratio)
-
-  self.opts = vim.deepcopy(opts)
-
-  self.win_opts = {
+function Float:create_window()
+  local bufnr = vim.api.nvim_create_buf(false, true)
+  local winid = vim.api.nvim_open_win(bufnr, self.enter or false, {
     style = "minimal",
     relative = "editor",
-    width = w.dim,
-    height = h.dim,
-    row = h.pos - 2,
-    col = w.pos,
+    width = self.width,
+    height = self.height,
+    row = self.row,
+    col = self.col,
     border = "rounded",
-    title = self.opts.title,
-    title_pos = self.opts.title_pos,
-    noautocmd = self.opts.noautocmd,
-  }
+    title = self.title,
+  })
 
-  self:mount()
-  self:on_key("q", self.close, "close window")
-  return self
-end
+  self.buf = bufnr
+  self.win = winid
 
-function M:mount()
-  if self:buf_valid() then
-    self.buf = self.buf
-  else
-    self.buf = vim.api.nvim_create_buf(false, true)
+  if self.filetype ~= nil then
+    vim.bo.ft = self.filetype
   end
 
-  self.win = vim.api.nvim_open_win(self.buf, true, self.win_opts)
+  self:_disable_jump()
+  self:_set_keymaps()
+  self:_set_autocmds()
+  self:render()
 end
 
-function M:on_key(key, fn, desc)
-  vim.keymap.set("n", key, function()
-    fn(self)
-  end, {
+function Float:render()
+  local lines = {}
+  if type(self.content) == "function" then
+    local text = self.content()
+    lines = text:read()
+  else
+    lines = self.content
+  end
+
+  vim.api.nvim_buf_set_option(self.buf, "modifiable", true)
+  vim.api.nvim_buf_set_lines(self.buf, -2, -1, false, {})
+  vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_option(self.buf, "modifiable", self.editable or false)
+end
+
+function Float:add_keymap(map)
+  table.insert(self.keymaps, map)
+end
+
+function Float:_set_keymaps()
+  for _, map in ipairs(self.keymaps) do
+    local mode, lhs, rhs = unpack(map)
+    self:set_keymap(mode, lhs, rhs)
+  end
+end
+
+function Float:set_keymap(modes, lhs, rhs)
+  vim.keymap.set(modes, lhs, rhs, {
     nowait = true,
-    buffer = self.buf,
-    desc = desc,
+    buffer = self.buf
   })
 end
 
-function M:close()
-  local buf = self.buf
-  local win = self.win
-
-  self.win = nil
-  vim.schedule(function()
-    if win and vim.api.nvim_win_is_valid(win) then
-      vim.api.nvim_win_close(win, true)
-    end
-    if buf and vim.api.nvim_buf_is_valid(buf) then
-      vim.api.nvim_buf_delete(buf, { force = true })
-    end
-  end)
+function Float:add_autocmd(event, opts)
+  table.insert(self.autocmds, {
+    event = event,
+    opts = opts,
+  })
 end
 
-function M:buf_valid()
-  return self.buf and vim.api.nvim_buf_is_valid(self.buf)
-end
-
-function M:focus()
-  vim.api.nvim_set_current_win(self.win)
-
-  if vim.v.vim_did_enter ~= 1 then
-    vim.api.nvim_create_autocmd("VimEnter", {
-      once = true,
-      callback = function()
-        if self.win and vim.api.nvim_win_is_valid(self.win) then
-          pcall(vim.api.nvim_set_current_win, self.win)
-        end
-        return true
-      end,
-    })
+function Float:_set_autocmds()
+  for _, cmd in ipairs(self.autocmds) do
+    local opts = vim.tbl_extend("force", cmd.opts, { buffer = self.buf })
+    vim.api.nvim_create_autocmd(cmd.event, opts)
   end
 end
 
-return M
+function Float:_disable_jump()
+  self:set_keymap("n", "<c-o>", "")
+  self:set_keymap("n", "<c-i>", "")
+end
+
+return Float

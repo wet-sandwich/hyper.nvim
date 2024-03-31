@@ -1,1 +1,0 @@
--- displays the response buffer
