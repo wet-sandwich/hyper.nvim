@@ -117,10 +117,10 @@ function M.entry(value, opts)
   local width = opts.width or 100
   local height = opts.height or 1
 
-  local title = "🞂🞂 %s ↵ 🞀🞀"
+  local title = opts.overlay and ("🞂🞂 %s ↵ 🞀🞀"):format(opts.title) or opts.title
 
   local bufnr, winid = create_window(width, height, {
-    title = title:format(opts.title or "Entry"),
+    title = title,
     row = opts.row or -1,
     col = opts.col or -1,
   })

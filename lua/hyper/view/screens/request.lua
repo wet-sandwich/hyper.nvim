@@ -152,7 +152,7 @@ function M.new(State)
   response_win:add_keymap({"n", "U", function()
     local state = State.get_state()
     Menu.entry(state.url, {
-      title = "URL ↵ ",
+      title = "URL",
       row = -req_height - 2,
       col = Config.layout_config.col_width,
       width = width - 2 * Config.layout_config.col_width,
@@ -168,6 +168,7 @@ function M.new(State)
     local state = State.get_state()
     Menu.entry(state.query_params, {
       title = "Query Parameters",
+      overlay = true,
       width = width,
       height = res_height,
       filetype = "sh",
@@ -183,6 +184,7 @@ function M.new(State)
     if Util.is_body_method(state.method) then
       Menu.entry(state.body, {
         title = "Body",
+        overlay = true,
         width = width,
         height = res_height,
         filetype = "json",
@@ -198,6 +200,7 @@ function M.new(State)
     local state = State.get_state()
     Menu.entry(state.headers, {
       title = "Headers",
+      overlay = true,
       width = width,
       height = res_height,
       separator = ": ",
