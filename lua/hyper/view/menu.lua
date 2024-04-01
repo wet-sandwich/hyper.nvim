@@ -3,6 +3,8 @@ local M = {}
 local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
 
 local function create_window(width, height, opts)
+  vim.o.eventignore = "BufLeave"
+
   local bufnr = vim.api.nvim_create_buf(false, true)
   local winid = vim.api.nvim_open_win(bufnr, true, {
     style = "minimal",
@@ -14,6 +16,9 @@ local function create_window(width, height, opts)
     border = "rounded",
     title = opts.title,
   })
+
+  vim.o.eventignore = ""
+
   return bufnr, winid
 end
 
