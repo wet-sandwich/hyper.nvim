@@ -66,15 +66,19 @@ end
 function Radio:hover_next()
   if self.hover < #self.options - 1 then
     self.hover = self.hover + 1
-    self:update_highlight()
+  else
+    self.hover = 0
   end
+  self:update_highlight()
 end
 
 function Radio:hover_previous()
   if self.hover > 0 then
     self.hover = self.hover - 1
-    self:update_highlight()
+  else
+    self.hover = #self.options - 1
   end
+  self:update_highlight()
 end
 
 function Radio:select()
