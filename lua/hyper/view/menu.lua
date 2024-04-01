@@ -148,13 +148,6 @@ function M.entry(value, opts)
     vim.bo.ft = opts.filetype
   end
 
-  vim.keymap.set("n", "q", function()
-    vim.api.nvim_win_close(winid, true)
-  end, {
-    nowait = true,
-    buffer = bufnr
-  })
-
   vim.keymap.set("n", "<c-c>", function()
     vim.api.nvim_win_close(winid, true)
   end, {
