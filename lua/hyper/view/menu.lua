@@ -117,7 +117,7 @@ function M.entry(value, opts)
   local width = opts.width or 100
   local height = opts.height or 1
 
-  local title = "🞂%s ↵ "
+  local title = "🞂🞂 %s ↵ 🞀🞀"
 
   local bufnr, winid = create_window(width, height, {
     title = title:format(opts.title or "Entry"),
