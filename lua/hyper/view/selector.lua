@@ -51,15 +51,19 @@ end
 function Selector:select_next()
   if self.selection < #self.options - 1 then
     self.selection = self.selection + 1
-    self:update_highlight()
+  else
+    self.selection = 0
   end
+  self:update_highlight()
 end
 
 function Selector:select_previous()
   if self.selection > 0 then
     self.selection = self.selection - 1
-    self:update_highlight()
+  else
+    self.selection = #self.options - 1
   end
+  self:update_highlight()
 end
 
 function Selector:_format_list()
