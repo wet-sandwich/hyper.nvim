@@ -1,5 +1,7 @@
 local M = {}
 
+local cwd = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+
 M.win = {
   min_width = 80,
   max_width = 140,
@@ -9,8 +11,19 @@ M.win = {
   height_ratio = 0.8,
 }
 
+M.viewbox = {
+  width = 0.8,
+  height = 0.8,
+}
+
 M.layout_config = {
   col_width = 25,
+}
+
+M.options = {
+  state = vim.fn.stdpath("state") .. "/hyper/" .. cwd .. "/state.json",
+  history = vim.fn.stdpath("state") .. "/hyper/history.json",
+  max_history = 25,
 }
 
 return M

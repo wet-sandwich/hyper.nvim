@@ -1,53 +1,55 @@
-local Float = require("hyper.view.float")
-local Render = require("hyper.view.render")
+local RequestScreen = require("hyper.view.screens.request")
+local HistoryScreen = require("hyper.view.screens.history")
+local VariablesScreen = require("hyper.view.screens.variables")
 local State = require("hyper.state")
-local Commands = require("hyper.view.commands")
 local Util = require("hyper.util")
 
 local M = {}
+M.screen = nil
 
-M.view = nil
+State.init()
 
-function M.visible()
-  return M.view and M.view.win and vim.api.nvim_win_is_valid(M.view.win)
-end
-
-function M.show(mode)
-  M.view = M.visible() and M.view or M.create()
-  if mode then
-    M.view.state.set_state("mode", mode)
+function M.show()
+  if M.screen and M.screen.isVisible then
+    M.screen:hide()
   end
-  M.view:update()
+
+  local mode = State.get_state("mode") or "main"
+  Util.update_env_files(State)
+
+  if mode == "main" then
+    M.screen = RequestScreen.new(State)
+  end
+
+  if mode == "history" then
+    M.screen = HistoryScreen.new(State)
+  end
+
+  if mode == "variables" then
+    M.screen = VariablesScreen.new(State)
+  end
+
+  M.screen:display()
+  M:setup_cmds(mode)
 end
 
-function M.create()
-  local self = setmetatable({}, { __index = setmetatable(M, { __index = Float }) })
+function M:setup_cmds(mode)
+  if mode == "main" then
+    M.screen:on_key("n", "S", function()
+      State.set_state("mode", "history")
+      M.show()
+    end)
 
-  self.state = State
-  self.state.init()
-
-  Util.init_env_files(self.state)
-
-  Float.init(self, {
-    title = "Hyper",
-    title_pos = "center",
-    noautocmd = true,
-  })
-
-  self.render = Render.new(self)
-
-  Commands.setup(self)
-
-  return self
-end
-
-function M:update()
-  if self.buf and vim.api.nvim_buf_is_valid(self.buf) then
-    vim.bo[self.buf].modifiable = true
-    self.render:update()
-    vim.bo[self.buf].modifiable = false
-    vim.cmd.redraw()
-    Commands.setup(self)
+    M.screen:on_key("n", "E", function()
+      State.set_state("mode", "variables")
+      M.show()
+    end)
+  else
+    self.screen:on_key("n", "<c-o>", function()
+      self.screen:hide()
+      State.set_state("mode", "main")
+      self.show()
+    end)
   end
 end
 

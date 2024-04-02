@@ -1,8 +1,16 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
-local State = require("hyper.state")
+local Config = require("hyper.config")
 
 local M = {}
+
+function M.get_viewbox()
+  local width = math.floor(vim.o.columns * Config.viewbox.width)
+  local height = math.floor(vim.o.lines * Config.viewbox.height)
+  local col = math.floor((vim.o.columns - width) / 2)
+  local row = math.floor((vim.o.lines - height) / 2) - 2
+  return width, height, row, col
+end
 
 function M.get_dimension(d, min, max, ratio)
   local dim = math.min(math.floor(d * ratio), max)
@@ -194,89 +202,126 @@ function M.ltrim(str)
   return str:match'^%s*(.*)'
 end
 
-function M.init_env_files(state)
-  local env_files = find_env_files()
-  local env = state.get_state("env")
-
-  if next(env_files) == nil then
-    return
-  end
-
-  env.available = env_files
-
-  if #env_files == 1 then
-    env.selected = env_files[1]
-    state.set_state("env", env)
-    return
-  end
-
-  for _, file in ipairs(env_files) do
-    if vim.fs.basename(file) == ".env" then
-      env.selected = file
-      state.set_state("env", env)
-      return
-    end
-  end
-end
-
-function M.validate_env_files()
+function M.update_env_files(State)
   local env = State.get_state("env")
   local env_files = find_env_files()
 
-  if #env.available == #env_files then
+  -- check if env files are (still) there
+  if next(env_files) == nil then
+    -- if files no longer exist then reset env state
+    if #env.available > 0 then
+      env.vailable = {}
+      env.selected = nil
+      State.set_state("env", env)
+    end
     return
   end
+
   env.available = env_files
 
-  for _, v in ipairs(env.available) do
-    if v == env.selected then
-      State.set_state("env", env)
-      return
+  if env.selected then
+    State.set_state("env", env)
+    return
+  end
+
+  if #env_files > 1 then
+    for _, file in ipairs(env_files) do
+      if vim.fs.basename(file) == ".env" then
+        env.selected = file
+        State.set_state("env", env)
+        return
+      end
     end
   end
 
-  env.selected = env.available[1]
+  env.selected = env_files[1]
   State.set_state("env", env)
 end
 
-function M.find_collections()
-  local cwd = vim.fn.getcwd()
-
-  local paths = vim.fs.find(function(name, path)
-    return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
-  end, {
-      limit = math.huge,
-      type = 'file',
-    })
-
-  local collections = {}
-  for _, path in ipairs(paths) do
-    local stat = uv.fs_stat(path)
-    local mtime = stat and stat.mtime.sec or os.time()
-
-    collections[path] = {
-      last_modified = mtime,
-      data = {},
-    }
+function M.read_file(file)
+  if uv.fs_stat(file) == nil then
+    return ""
   end
 
-  return collections
+  local f = assert(io.open(file, "r"))
+  local s = f:read("*all")
+  f:close()
+  return s
 end
 
-function M.load_collections(existing, found)
-  for k, v in pairs(found) do
-    if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
-      local cfile = vim.fn.readfile(k)
-      local cstring = table.concat(cfile, "")
-      local ctable = vim.json.decode(cstring)
-      existing[k] = {
-        last_modified = v["last_modified"],
-        data = ctable,
-      }
-    end
+function M.write_file(file, data)
+  local f = assert(io.open(file, "w+"))
+  f:write(data)
+  f:close()
+end
+
+local function sort_keys(t)
+  local keys = {}
+  for k, _ in pairs(t) do
+    table.insert(keys, k)
   end
-
-  return existing
+  table.sort(keys)
+  return keys
 end
+
+local function flatten_table(t)
+  local sorted_keys = sort_keys(t)
+  local str = ""
+  for _, k in ipairs(sorted_keys) do
+    str = str .. k .. t[k]
+  end
+  return str
+end
+
+function M.hash_http_request(req)
+  local t = {
+    req.method,
+    req.url,
+    flatten_table(req.query_params),
+    flatten_table(req.headers),
+    req.body and table.concat(req.body, "") or "",
+  }
+  return vim.fn.sha256(table.concat(t, ""))
+end
+
+-- function M.find_collections()
+--   local cwd = vim.fn.getcwd()
+--
+--   local paths = vim.fs.find(function(name, path)
+--     return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
+--   end, {
+--       limit = math.huge,
+--       type = 'file',
+--     })
+--
+--   local collections = {}
+--   for _, path in ipairs(paths) do
+--     local stat = uv.fs_stat(path)
+--     local mtime = stat and stat.mtime.sec or os.time()
+--
+--     collections[path] = {
+--       last_modified = mtime,
+--       data = {},
+--     }
+--   end
+--
+--   return collections
+-- end
+--
+-- function M.load_collections(existing, found)
+--   for k, v in pairs(found) do
+--     if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
+--       local cfile = vim.fn.readfile(k)
+--       local cstring = table.concat(cfile, "")
+--       local ctable = vim.json.decode(cstring)
+--       existing[k] = {
+--         last_modified = v["last_modified"],
+--         data = ctable,
+--       }
+--     end
+--   end
+--
+--   return existing
+-- end
 
 return M
