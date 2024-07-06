@@ -19,6 +19,7 @@ local strings = {
   res_status = "STATUS %d",
   res_time = "TIME %dms",
   history = "Hi[S]tory (%d)",
+  collections = "[C]ollections",
 }
 
 local M = {}
@@ -61,9 +62,13 @@ function M.new(State)
       strings.envars,
     }))
 
-    -- history
+    -- history and collections
     local history = string.format(strings.history, #History.order)
-    menu:append(history)
+    menu:append(table.concat({
+      history,
+      string.rep(" ", col_width - #history),
+      strings.collections,
+    }))
 
     -- make request and clear all commands
     menu:nl()

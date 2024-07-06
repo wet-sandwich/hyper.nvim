@@ -240,7 +240,7 @@ end
 
 function M.read_file(file)
   if uv.fs_stat(file) == nil then
-    return ""
+    return nil
   end
 
   local f = assert(io.open(file, "r"))
@@ -284,44 +284,79 @@ function M.hash_http_request(req)
   return vim.fn.sha256(table.concat(t, ""))
 end
 
--- function M.find_collections()
---   local cwd = vim.fn.getcwd()
---
---   local paths = vim.fs.find(function(name, path)
---     return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
---   end, {
---       limit = math.huge,
---       type = 'file',
---     })
---
---   local collections = {}
---   for _, path in ipairs(paths) do
---     local stat = uv.fs_stat(path)
---     local mtime = stat and stat.mtime.sec or os.time()
---
---     collections[path] = {
---       last_modified = mtime,
---       data = {},
---     }
---   end
---
---   return collections
--- end
---
--- function M.load_collections(existing, found)
---   for k, v in pairs(found) do
---     if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
---       local cfile = vim.fn.readfile(k)
---       local cstring = table.concat(cfile, "")
---       local ctable = vim.json.decode(cstring)
---       existing[k] = {
---         last_modified = v["last_modified"],
---         data = ctable,
---       }
---     end
---   end
---
---   return existing
--- end
+function M.find_collections()
+  local paths = vim.fs.find(function(name, _)
+    return name:match('.*%.http$')
+  end, {
+      limit = 5,
+      type = 'file',
+    })
+
+  local collections = {}
+  for _, path in ipairs(paths) do
+    local stat = uv.fs_stat(path)
+    local modtime = stat and stat.mtime.sec or os.time()
+
+    collections[path] = modtime
+  end
+
+  return collections
+end
+
+function M.sync_collections(state, curr)
+  local items_to_add = vim.deepcopy(curr)
+  local items_to_update = {}
+  local items_to_remove = {}
+
+  for i, collection in ipairs(state.collections) do
+    if curr[collection.path] == nil then
+      -- collection file was removed, mark to remove from state
+      table.insert(items_to_remove, i)
+      break
+    end
+
+    if curr[collection.path] ~= collection.modtime then
+      table.insert(items_to_update, i)
+    end
+
+    items_to_add[collection.path] = nil
+  end
+
+  -- update collections
+  for _, idx in ipairs(items_to_update) do
+    print("updating", idx)
+  end
+
+  -- remove collections
+  for _, idx in ipairs(items_to_remove) do
+    print("removing", idx)
+  end
+
+  -- add new collection
+  for _, path in pairs(items_to_add) do
+    print("adding", path)
+  end
+end
+
+function M._read_collection(path)
+  if uv.fs_stat(path) == nil then
+    vim.notify("Collection is empty",vim.log.levels.WARN)
+    return nil
+  end
+
+  local vars = {}
+  local reqs = {}
+
+  local raw_reqs = {}
+
+  local file = assert(io.open(path, "r"))
+  local text = file:read("*a")
+
+  for k, v in text:gmatch("^@(%w)=(%w)$") do
+    vars[k] = tonumber(v) or v
+  end
+
+  return vars
+end
 
 return M

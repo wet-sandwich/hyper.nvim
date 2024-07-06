@@ -35,6 +35,8 @@ function M.new(State)
     width = list_width,
     height = height,
     options = create_list(),
+    focused = true,
+    action_icon = "↵",
   })
 
   local function create_preview()

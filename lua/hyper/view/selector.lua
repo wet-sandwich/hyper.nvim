@@ -10,42 +10,81 @@ function Selector.new(opts)
   local self = Float.new(opts)
   self.options = opts.options or {}
   self.selection = 0
-  self.action_icon = "↵"
+  self.action_icon = opts.action_icon or nil
+  self.has_focus = opts.focused or opts.enter or false
   setmetatable(self, { __index = setmetatable(Selector, { __index = Float }) })
   return self
 end
 
+local function hide_cursor()
+  vim.go.guicursor = "a:Cursor/lCursor"
+  vim.cmd("hi Cursor blend=100")
+end
+
 function Selector:create_window()
+  self:add_autocmd("WinEnter", {
+    callback = hide_cursor
+  })
+
+  self:add_autocmd("WinLeave", {
+    callback = function()
+      vim.go.guicursor = vim.g.prev_cursor
+      vim.cmd("hi Cursor blend=0")
+    end
+  })
+
   self:_format_list()
   Float.create_window(self)
 
+  if vim.api.nvim_get_current_win() == self.win then
+    hide_cursor()
+  end
+
   if #self.options == 0 then return end
 
-  self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
-    end_col = self.width,
-    hl_group = "PmenuSel",
-  })
-  if self.action_icon then
-    self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
-      virt_text = {{self.action_icon, "PmenuSel"}},
-      virt_text_pos = "overlay",
-    })
-  end
+  self:update_highlight()
 end
 
 function Selector:update_highlight()
-  vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
-    end_col = self.width,
-    hl_group = "PmenuSel",
-    id = self.hl_extid,
-  })
-  if self.action_icon then
-    vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
-      virt_text = {{self.action_icon, "PmenuSel"}},
-      virt_text_pos = "overlay",
-      id = self.vt_extid,
+  if self.has_focus then
+    self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
+      end_col = self.width,
+      hl_group = "PmenuSel",
+      id = self.hl_extid,
     })
+    if self.action_icon then
+      self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
+        virt_text = {{self.action_icon, "PmenuSel"}},
+        virt_text_pos = "overlay",
+        id = self.vt_extid,
+      })
+    end
   end
+end
+
+function Selector:remove_highlight()
+  if self.hl_extid then
+    vim.api.nvim_buf_del_extmark(self.buf, ns_hyper_selection, self.hl_extid)
+  end
+
+  if self.vt_extid then
+    vim.api.nvim_buf_del_extmark(self.buf, ns_hyper_selection, self.vt_extid)
+  end
+end
+
+function Selector:toggle_focus()
+  if self.has_focus then
+    self:remove_highlight()
+    self.has_focus = false
+  else
+    self.has_focus = true
+    self:update_highlight()
+    vim.api.nvim_set_current_win(self.win)
+  end
+end
+
+function Selector:is_focused()
+  return self.has_focus
 end
 
 function Selector:select_next()
@@ -64,6 +103,13 @@ function Selector:select_previous()
     self.selection = #self.options - 1
   end
   self:update_highlight()
+end
+
+function Selector:update_options(new_options)
+  self.options = new_options
+  self.selection = 0
+  self:_format_list()
+  self:render()
 end
 
 function Selector:_format_list()

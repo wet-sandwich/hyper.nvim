@@ -17,7 +17,43 @@ local default_state = {
     available = {},
     selected = nil,
   },
-  -- collections = {},
+  collections = {
+    {
+      name = "users",
+      vars = {},
+      requests = {
+        {
+          method = "GET",
+          url = "https://www.myapi.com/users",
+          params = {
+            id = "123456",
+          },
+        },
+        {
+          method = "POST",
+          url = "https://www.myapi.com/users",
+          params = {},
+          body = {
+            name = "wet-sandwich",
+            job = "SWE",
+          }
+        }
+      },
+    },
+    {
+      name = "photos",
+      vars = {},
+      requests = {
+        {
+          method = "PUT",
+          url = "https://www.myapi.com/photos",
+          params = {
+            id = "6798",
+          },
+        },
+      }
+    },
+  },
 }
 
 function M.init()
@@ -53,7 +89,7 @@ function M.read()
   if pcall(function()
     saved_state = vim.json.decode(Util.read_file(Config.options.state))
   end) then
-    data = saved_state
+    data = vim.tbl_deep_extend("force", default_state, saved_state)
   else
     data = default_state
   end
