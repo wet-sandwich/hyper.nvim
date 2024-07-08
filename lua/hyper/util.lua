@@ -210,7 +210,7 @@ function M.update_env_files(State)
   if next(env_files) == nil then
     -- if files no longer exist then reset env state
     if #env.available > 0 then
-      env.vailable = {}
+      env.available = {}
       env.selected = nil
       State.set_state("env", env)
     end
