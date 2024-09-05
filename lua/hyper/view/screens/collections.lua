@@ -1,4 +1,3 @@
-local Text = require("hyper.view.text")
 local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
@@ -54,24 +53,7 @@ function M.new(State)
     local c_idx = coll_list_win.selection + 1
     local r_idx = req_list_win.selection + 1
     local req = collections[c_idx].requests[r_idx]
-
-    local text = Text.new()
-    text:append(string.format("%-6s %s", req.method, req.url))
-    if next(req.params) ~= nil then
-      text:nl()
-      text:append("Query Parameters:")
-      for k, v in pairs(req.params) do
-        text:append(string.format("  %s=%s", k, v))
-      end
-    end
-    if req.body ~= nil then
-      text:nl()
-      text:append("Body:")
-      for _, line in ipairs(req.body) do
-        text:append(line)
-      end
-    end
-    return text
+    return Util.create_request_preview(req)
   end
 
   local req_prev_win = Float.new({

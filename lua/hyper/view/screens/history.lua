@@ -1,4 +1,3 @@
-local Text = require("hyper.view.text")
 local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
@@ -7,12 +6,6 @@ local History = require("hyper.history")
 
 local width, height, row, col = Util.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
-
-local templates = {
-  url = "%-6s %s",
-  params = "  %s=%s",
-  headers = "  %s: %s",
-}
 
 local M = {}
 
@@ -42,37 +35,7 @@ function M.new(State)
   local function create_preview()
     local id = History.order[list_win.selection + 1]
     local req = History.requests[id]
-    local preview = Text.new()
-
-    if req ~= nil then
-      preview:append(templates.url:format(req.method, req.url))
-
-      if req.query_params ~= nil then
-        preview:nl()
-        preview:append("Query Params:")
-        for key, val in pairs(req.query_params) do
-          preview:append(templates.params:format(key, val))
-        end
-      end
-
-      if next(req.headers) ~= nil then
-        preview:nl()
-        preview:append("Headers:")
-        for key, val in pairs(req.headers) do
-          preview:append(templates.headers:format(key, val))
-        end
-      end
-
-      if req.body ~= nil then
-        preview:nl()
-        preview:append("Body:")
-        for _, line in ipairs(req.body) do
-          preview:append(line)
-        end
-      end
-    end
-
-    return preview
+    return Util.create_request_preview(req)
   end
 
   local preview_win = Float.new({

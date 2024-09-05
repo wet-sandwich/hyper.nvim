@@ -2,6 +2,7 @@ local curl = require("plenary.curl")
 local uv = vim.loop
 local Config = require("hyper.config")
 local http = require("hyper.http-parser")
+local Text = require("hyper.view.text")
 
 local M = {}
 
@@ -362,6 +363,46 @@ function M.sync_collections(State)
   end
 
   State.set_state("collections", collections)
+end
+
+function M.create_request_preview(req)
+  local templates = {
+    url = "%-6s %s",
+    params = "  %s=%s",
+    headers = "  %s: %s",
+  }
+
+  local preview = Text.new()
+
+  if req ~= nil then
+    preview:append(templates.url:format(req.method, req.url))
+
+    if req.query_params ~= nil then
+      preview:nl()
+      preview:append("Query Params:")
+      for key, val in pairs(req.query_params) do
+        preview:append(templates.params:format(key, val))
+      end
+    end
+
+    if next(req.headers) ~= nil then
+      preview:nl()
+      preview:append("Headers:")
+      for key, val in pairs(req.headers) do
+        preview:append(templates.headers:format(key, val))
+      end
+    end
+
+    if req.body ~= nil then
+      preview:nl()
+      preview:append("Body:")
+      for _, line in ipairs(req.body) do
+        preview:append(line)
+      end
+    end
+  end
+
+  return preview
 end
 
 return M
