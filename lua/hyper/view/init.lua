@@ -20,9 +20,6 @@ function M.show()
   local mode = State.get_state("mode") or "main"
   Util.update_env_files(State)
 
-  local collection_paths = Util.find_collections()
-  print(vim.inspect(collection_paths))
-
   if mode == "main" then
     M.screen = RequestScreen.new(State)
   end

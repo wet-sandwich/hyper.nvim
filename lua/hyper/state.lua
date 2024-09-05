@@ -20,7 +20,8 @@ local default_state = {
   collections = {
     {
       name = "users",
-      vars = {},
+      path = "/home/andrew/projects/nvim/plugins/hyper.nvim/users.http",
+      modtime = 1712459405,
       requests = {
         {
           method = "GET",
@@ -42,7 +43,8 @@ local default_state = {
     },
     {
       name = "photos",
-      vars = {},
+      path = "/home/andrew/projects/nvim/plugins/hyper.nvim/photos.http",
+      modtime = 1712459405,
       requests = {
         {
           method = "PUT",

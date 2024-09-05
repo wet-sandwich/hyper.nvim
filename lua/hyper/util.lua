@@ -1,6 +1,7 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
 local Config = require("hyper.config")
+local http = require("hyper.http-parser")
 
 local M = {}
 
@@ -284,7 +285,7 @@ function M.hash_http_request(req)
   return vim.fn.sha256(table.concat(t, ""))
 end
 
-function M.find_collections()
+local function find_collections()
   local paths = vim.fs.find(function(name, _)
     return name:match('.*%.http$')
   end, {
@@ -303,19 +304,31 @@ function M.find_collections()
   return collections
 end
 
-function M.sync_collections(state, curr)
-  local items_to_add = vim.deepcopy(curr)
+local function read_collection(path)
+  local lines = {}
+  for line in io.lines(path) do
+    lines[#lines + 1] = line
+  end
+
+  return http.parse(lines)
+end
+
+function M.sync_collections(State)
+  local collections = State.get_state("collections")
+  local available_collections = find_collections()
+
+  local items_to_add = vim.deepcopy(available_collections)
   local items_to_update = {}
   local items_to_remove = {}
 
-  for i, collection in ipairs(state.collections) do
-    if curr[collection.path] == nil then
+  for i, collection in ipairs(collections) do
+    if available_collections[collection.path] == nil then
       -- collection file was removed, mark to remove from state
       table.insert(items_to_remove, i)
       break
     end
 
-    if curr[collection.path] ~= collection.modtime then
+    if available_collections[collection.path] ~= collection.modtime then
       table.insert(items_to_update, i)
     end
 
@@ -323,40 +336,32 @@ function M.sync_collections(state, curr)
   end
 
   -- update collections
-  for _, idx in ipairs(items_to_update) do
-    print("updating", idx)
+  for _, i in ipairs(items_to_update) do
+    print("updating", collections[i].path)
+    local path = collections[i].path
+    collections[i].modtime = available_collections[path]
+    collections[i].requests = read_collection(path)
   end
 
   -- remove collections
-  for _, idx in ipairs(items_to_remove) do
-    print("removing", idx)
+  table.sort(items_to_remove, function(a, b) return a > b end)
+  for _, i in ipairs(items_to_remove) do
+    print("removing", collections[i].path)
+    table.remove(collections, i)
   end
 
   -- add new collection
-  for _, path in pairs(items_to_add) do
+  for path, _ in pairs(items_to_add) do
     print("adding", path)
-  end
-end
-
-function M._read_collection(path)
-  if uv.fs_stat(path) == nil then
-    vim.notify("Collection is empty",vim.log.levels.WARN)
-    return nil
-  end
-
-  local vars = {}
-  local reqs = {}
-
-  local raw_reqs = {}
-
-  local file = assert(io.open(path, "r"))
-  local text = file:read("*a")
-
-  for k, v in text:gmatch("^@(%w)=(%w)$") do
-    vars[k] = tonumber(v) or v
+    table.insert(collections, {
+      path = path,
+      modtime = available_collections[path],
+      name = string.match(path, ".*/(.*)%.http$"),
+      requests = read_collection(path)
+    })
   end
 
-  return vars
+  State.set_state("collections", collections)
 end
 
 return M

@@ -11,8 +11,7 @@ local coll_height = math.floor(height * 0.4)
 local M = {}
 
 function M.new(State)
-  -- local avail_coll = Util.find_collections()
-  -- print(vim.inspect(avail_coll))
+  Util.sync_collections(State)
   local collections = State.get_state("collections")
 
   local function coll_list()
@@ -68,11 +67,9 @@ function M.new(State)
     if req.body ~= nil then
       text:nl()
       text:append("Body:")
-      text:append("{")
-      for k, v in pairs(req.body) do
-        text:append(string.format("  %s: %s", k, v))
+      for _, line in ipairs(req.body) do
+        text:append(line)
       end
-      text:append("}")
     end
     return text
   end
