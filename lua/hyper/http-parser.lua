@@ -4,7 +4,7 @@ local function reset_request()
   return {
     method = "",
     url = "",
-    params = {},
+    query_params = {},
     headers = {},
     -- body = {},
     body = nil,
@@ -53,9 +53,9 @@ local function replace_variables(globals, request)
   for _, v in ipairs(vars) do
     request.url = replace_token(v.token, v.value, request.url)
 
-    if request.params ~= nil then
-      for name, value in pairs(request.params) do
-        request.params[name] = replace_token(v.token, v.value, value)
+    if request.query_params ~= nil then
+      for name, value in pairs(request.query_params) do
+        request.query_params[name] = replace_token(v.token, v.value, value)
       end
     end
 
@@ -144,7 +144,7 @@ function M.parse(file)
         req.url = url or whole_url
         if params ~= nil then
           for k, v in string.gmatch(params, "(.*)=(.*)&?") do
-            req.params[k] = v
+            req.query_params[k] = v
           end
         end
         gatheringRequest = true
