@@ -405,4 +405,14 @@ function M.create_request_preview(req)
   return preview
 end
 
+function M.select_request(state, request)
+    state.set_state("method", request.method or "")
+    state.set_state("url", request.url or "")
+    state.set_state("query_params", request.query_params or {})
+    state.set_state("headers", request.headers or {})
+    state.set_state("body", request.body or {})
+
+    vim.api.nvim_input("<c-o>")
+end
+
 return M

@@ -72,13 +72,7 @@ function M.new(State)
     local id = History.order[list_win.selection + 1]
     local request = History.requests[id]
 
-    State.set_state("method", request.method or "")
-    State.set_state("url", request.url or "")
-    State.set_state("query_params", request.query_params or {})
-    State.set_state("headers", request.headers or {})
-    State.set_state("body", request.body or {})
-
-    vim.api.nvim_input("<c-o>")
+    Util.select_request(State, request)
   end})
 
   return HistoryScreen

@@ -103,6 +103,12 @@ function M.new(State, View)
     View.show()
   end})
 
+  req_list_win:add_keymap({"n", "<CR>", function()
+    local req = collections[coll_list_win.selection + 1].requests[req_list_win.selection + 1]
+
+    Util.select_request(State, req)
+  end})
+
   coll_list_win:add_keymap({"n", "j", function()
     if coll_list_win:is_focused() then
       coll_list_win:select_next()
