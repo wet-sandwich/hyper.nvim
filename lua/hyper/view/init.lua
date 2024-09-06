@@ -33,7 +33,7 @@ function M.show()
   end
 
   if mode == "collections" then
-    M.screen = CollectionScreen.new(State)
+    M.screen = CollectionScreen.new(State, M)
   end
 
   M.screen:display()

@@ -9,7 +9,7 @@ local coll_height = math.floor(height * 0.4)
 
 local M = {}
 
-function M.new(State)
+function M.new(State, View)
   Util.sync_collections(State)
   local collections = State.get_state("collections")
 
@@ -95,6 +95,12 @@ function M.new(State)
       req_list_win:select_previous()
       req_prev_win:render()
     end
+  end})
+
+  req_list_win:add_keymap({"n", "<c-o>", function()
+    CollectionScreen:hide()
+    State.set_state("mode", "main")
+    View.show()
   end})
 
   coll_list_win:add_keymap({"n", "j", function()
