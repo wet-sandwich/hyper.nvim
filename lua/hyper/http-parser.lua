@@ -6,7 +6,6 @@ local function reset_request()
     url = "",
     query_params = {},
     headers = {},
-    -- body = {},
     body = nil,
     variables = {},
   }
@@ -150,12 +149,6 @@ function M.parse(file)
         gatheringRequest = true
         gatheringHeaders = true
         skip = true
-
-        if globalVars then
-          req.variables = variables
-          variables = {}
-          globalVars = false
-        end
       end
     end
 
@@ -196,6 +189,7 @@ function M.parse(file)
   for _, request in ipairs(requests) do
     table.insert(filled_requests, replace_variables(variables, request))
   end
+
   return requests
 end
 
