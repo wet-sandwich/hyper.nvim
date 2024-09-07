@@ -17,45 +17,7 @@ local default_state = {
     available = {},
     selected = nil,
   },
-  collections = {
-    {
-      name = "users",
-      path = "/home/andrew/projects/nvim/plugins/hyper.nvim/users.http",
-      modtime = 1712459405,
-      requests = {
-        {
-          method = "GET",
-          url = "https://www.myapi.com/users",
-          params = {
-            id = "123456",
-          },
-        },
-        {
-          method = "POST",
-          url = "https://www.myapi.com/users",
-          params = {},
-          body = {
-            name = "wet-sandwich",
-            job = "SWE",
-          }
-        }
-      },
-    },
-    {
-      name = "photos",
-      path = "/home/andrew/projects/nvim/plugins/hyper.nvim/photos.http",
-      modtime = 1712459405,
-      requests = {
-        {
-          method = "PUT",
-          url = "https://www.myapi.com/photos",
-          params = {
-            id = "6798",
-          },
-        },
-      }
-    },
-  },
+  collections = {},
 }
 
 function M.init()
