@@ -18,14 +18,14 @@ Using [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```viml
 Plug 'nvim-lua/plenary.nvim'
-Plug 'wet-sandwich/hyper.nvim', { 'tag': '0.1.3' }
+Plug 'wet-sandwich/hyper.nvim', { 'tag': '0.1.4' }
 ```
 
 Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
 
 ```lua
 use {
-  'wet-sandwich/hyper.nvim', tag = '0.1.3',
+  'wet-sandwich/hyper.nvim', tag = '0.1.4',
   requires = { {'nvim-lua/plenary.nvim'} }
 }
 ```
@@ -34,7 +34,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 {
-  'wet-sandwich/hyper.nvim', tag = '0.1.3',
+  'wet-sandwich/hyper.nvim', tag = '0.1.4',
   dependencies = { 'nvim-lua/plenary.nvim' }
 }
 ```
@@ -88,3 +88,11 @@ Repeating a previous request moves it to the top of the list with an updated
 timestamp instead of creating a new entry.
 
 ![hyper.request_history](https://imgur.com/fpXRibI.png)
+
+#### Collections
+
+Hyper supports collections via .http files. Navigate to the collections page and hyper will automatically search recursively within your current directory for any .http files and then parse them to create a list of requests. Use `<Tab>` to switch between the collection list and request list windows. Use `j` and `k` to move between items in the windows, and use `<cr>` in the request list window to select a request to use.
+
+For any tokens not filled in by the parser with the available variables found in the .http file, hyper will attempt to replace the remaining tokens using values from the selected .env file (this allows sensitive information to stay out of the collection).
+
+![hyper.collections](https://imgur.com/JC6NEBy.png)
