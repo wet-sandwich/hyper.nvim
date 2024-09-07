@@ -39,8 +39,15 @@ function M.new(State, View)
     enter = true,
   })
 
+  local function req_list_title()
+    if #collections > 0 then
+      return string.format("Requests: %s", collections[coll_list_win.selection + 1].name)
+    end
+    return "Requests"
+  end
+
   local req_list_win = Selector.new({
-    title = "Requests",
+    title = req_list_title(),
     row = coll_height + 4,
     col = col,
     width = list_width,
@@ -113,6 +120,7 @@ function M.new(State, View)
     if coll_list_win:is_focused() then
       coll_list_win:select_next()
       req_list_win:update_options(req_list(coll_list_win.selection + 1))
+      vim.api.nvim_win_set_config(req_list_win.win, { title = req_list_title() })
       req_prev_win:render()
     end
   end})
@@ -121,6 +129,7 @@ function M.new(State, View)
     if coll_list_win:is_focused() then
       coll_list_win:select_previous()
       req_list_win:update_options(req_list(coll_list_win.selection + 1))
+      vim.api.nvim_win_set_config(req_list_win.win, { title = req_list_title() })
       req_prev_win:render()
     end
   end})
