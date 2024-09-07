@@ -338,7 +338,6 @@ function M.sync_collections(State)
 
   -- update collections
   for _, i in ipairs(items_to_update) do
-    print("updating", collections[i].path)
     local path = collections[i].path
     collections[i].modtime = available_collections[path]
     collections[i].requests = read_collection(path)
@@ -347,13 +346,11 @@ function M.sync_collections(State)
   -- remove collections
   table.sort(items_to_remove, function(a, b) return a > b end)
   for _, i in ipairs(items_to_remove) do
-    print("removing", collections[i].path)
     table.remove(collections, i)
   end
 
   -- add new collection
   for path, _ in pairs(items_to_add) do
-    print("adding", path)
     table.insert(collections, {
       path = path,
       modtime = available_collections[path],
