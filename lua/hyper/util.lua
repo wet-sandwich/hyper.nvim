@@ -1,6 +1,8 @@
 local curl = require("plenary.curl")
 local uv = vim.loop
 local Config = require("hyper.config")
+local http = require("hyper.http-parser")
+local Text = require("hyper.view.text")
 
 local M = {}
 
@@ -210,7 +212,7 @@ function M.update_env_files(State)
   if next(env_files) == nil then
     -- if files no longer exist then reset env state
     if #env.available > 0 then
-      env.vailable = {}
+      env.available = {}
       env.selected = nil
       State.set_state("env", env)
     end
@@ -240,7 +242,7 @@ end
 
 function M.read_file(file)
   if uv.fs_stat(file) == nil then
-    return ""
+    return nil
   end
 
   local f = assert(io.open(file, "r"))
@@ -284,44 +286,130 @@ function M.hash_http_request(req)
   return vim.fn.sha256(table.concat(t, ""))
 end
 
--- function M.find_collections()
---   local cwd = vim.fn.getcwd()
---
---   local paths = vim.fs.find(function(name, path)
---     return name:match('.*%.json$') and path:match(cwd .. '.*[/\\]collections$')
---   end, {
---       limit = math.huge,
---       type = 'file',
---     })
---
---   local collections = {}
---   for _, path in ipairs(paths) do
---     local stat = uv.fs_stat(path)
---     local mtime = stat and stat.mtime.sec or os.time()
---
---     collections[path] = {
---       last_modified = mtime,
---       data = {},
---     }
---   end
---
---   return collections
--- end
---
--- function M.load_collections(existing, found)
---   for k, v in pairs(found) do
---     if (existing[k] == nil or existing[k]["last_modified"] ~= v["last_modified"]) then
---       local cfile = vim.fn.readfile(k)
---       local cstring = table.concat(cfile, "")
---       local ctable = vim.json.decode(cstring)
---       existing[k] = {
---         last_modified = v["last_modified"],
---         data = ctable,
---       }
---     end
---   end
---
---   return existing
--- end
+local function find_collections()
+  local paths = vim.fs.find(function(name, _)
+    return name:match('.*%.http$')
+  end, {
+      limit = 5,
+      type = 'file',
+    })
+
+  local collections = {}
+  for _, path in ipairs(paths) do
+    local stat = uv.fs_stat(path)
+    local modtime = stat and stat.mtime.sec or os.time()
+
+    collections[path] = modtime
+  end
+
+  return collections
+end
+
+local function read_collection(path)
+  local lines = {}
+  for line in io.lines(path) do
+    lines[#lines + 1] = line
+  end
+
+  return http.parse(lines)
+end
+
+function M.sync_collections(State)
+  local collections = State.get_state("collections")
+  local available_collections = find_collections()
+
+  local items_to_add = vim.deepcopy(available_collections)
+  local items_to_update = {}
+  local items_to_remove = {}
+
+  for i, collection in ipairs(collections) do
+    if available_collections[collection.path] == nil then
+      -- collection file was removed, mark to remove from state
+      table.insert(items_to_remove, i)
+      break
+    end
+
+    if available_collections[collection.path] ~= collection.modtime then
+      table.insert(items_to_update, i)
+    end
+
+    items_to_add[collection.path] = nil
+  end
+
+  -- update collections
+  for _, i in ipairs(items_to_update) do
+    local path = collections[i].path
+    collections[i].modtime = available_collections[path]
+    collections[i].requests = read_collection(path)
+  end
+
+  -- remove collections
+  table.sort(items_to_remove, function(a, b) return a > b end)
+  for _, i in ipairs(items_to_remove) do
+    table.remove(collections, i)
+  end
+
+  -- add new collection
+  for path, _ in pairs(items_to_add) do
+    table.insert(collections, {
+      path = path,
+      modtime = available_collections[path],
+      name = string.match(path, ".*/(.*)%.http$"),
+      requests = read_collection(path)
+    })
+  end
+
+  State.set_state("collections", collections)
+end
+
+function M.create_request_preview(req)
+  local templates = {
+    url = "%-6s %s",
+    params = "  %s=%s",
+    headers = "  %s: %s",
+  }
+
+  local preview = Text.new()
+
+  if req ~= nil then
+    preview:append(templates.url:format(req.method, req.url))
+
+    if req.query_params ~= nil then
+      preview:nl()
+      preview:append("Query Params:")
+      for key, val in pairs(req.query_params) do
+        preview:append(templates.params:format(key, val))
+      end
+    end
+
+    if next(req.headers) ~= nil then
+      preview:nl()
+      preview:append("Headers:")
+      for key, val in pairs(req.headers) do
+        preview:append(templates.headers:format(key, val))
+      end
+    end
+
+    if req.body ~= nil then
+      preview:nl()
+      preview:append("Body:")
+      for _, line in ipairs(req.body) do
+        preview:append(line)
+      end
+    end
+  end
+
+  return preview
+end
+
+function M.select_request(state, request)
+    state.set_state("method", request.method or "")
+    state.set_state("url", request.url or "")
+    state.set_state("query_params", request.query_params or {})
+    state.set_state("headers", request.headers or {})
+    state.set_state("body", request.body or {})
+
+    vim.api.nvim_input("<c-o>")
+end
 
 return M

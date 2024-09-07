@@ -13,11 +13,11 @@ function Screen:display()
     win:create_window()
     if win.enter then
       self.main = win
-      self:on_key("n", "<c-c>", function()
-        self:hide()
-      end)
       self.isVisible = vim.api.nvim_win_is_valid(win.win)
     end
+    win:set_keymap("n", "<c-c>", function()
+      self:hide()
+    end)
   end
 end
 
