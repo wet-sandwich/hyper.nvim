@@ -26,4 +26,18 @@ M.options = {
   max_history = 25,
 }
 
+M.ns = vim.api.nvim_create_namespace("hyper")
+
+M.hl_grp = {
+  HttpStatusOk = "HyperOkStatus",
+  HttpStatusInfo = "HyperInfoStatus",
+  HttpStatusWarning = "HyperWarningStatus",
+  HttpStatusError = "HyperErrorStatus",
+}
+
+vim.api.nvim_set_hl(M.ns, M.hl_grp.HttpStatusOk, { fg = "black", bg = "green" })
+vim.api.nvim_set_hl(M.ns, M.hl_grp.HttpStatusInfo, { fg = "black", bg = "blue" })
+vim.api.nvim_set_hl(M.ns, M.hl_grp.HttpStatusWarning, { fg = "black", bg = "yellow" })
+vim.api.nvim_set_hl(M.ns, M.hl_grp.HttpStatusError, { fg = "black", bg = "red" })
+
 return M

@@ -1,6 +1,6 @@
-local M = {}
+local Config = require("hyper.config")
 
-local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
+local M = {}
 
 local function create_window(width, height, opts)
   vim.o.eventignore = "BufLeave"
@@ -47,22 +47,22 @@ function M.select_menu(entries, opts)
   vim.api.nvim_win_set_cursor(winid, {1,0})
   vim.api.nvim_buf_set_option(bufnr, "modifiable", false)
 
-  local hl_id = vim.api.nvim_buf_set_extmark(bufnr, ns_hyper_selection, sel - 1, 0, {
+  local hl_id = vim.api.nvim_buf_set_extmark(bufnr, Config.ns, sel - 1, 0, {
     end_col = width,
     hl_group = "PmenuSel",
   })
-  local vt_id = vim.api.nvim_buf_set_extmark(bufnr, ns_hyper_selection, sel - 1, width - 1, {
+  local vt_id = vim.api.nvim_buf_set_extmark(bufnr, Config.ns, sel - 1, width - 1, {
     virt_text = {{action_icon, "PmenuSel"}},
     virt_text_pos = "overlay",
   })
 
   local function update_highlight()
-    vim.api.nvim_buf_set_extmark(bufnr, ns_hyper_selection, sel - 1, 0, {
+    vim.api.nvim_buf_set_extmark(bufnr, Config.ns, sel - 1, 0, {
       end_col = width,
       hl_group = "PmenuSel",
       id = hl_id,
     })
-    vim.api.nvim_buf_set_extmark(bufnr, ns_hyper_selection, sel - 1, width - 1, {
+    vim.api.nvim_buf_set_extmark(bufnr, Config.ns, sel - 1, width - 1, {
       virt_text = {{action_icon, "PmenuSel"}},
       virt_text_pos = "overlay",
       id = vt_id,
