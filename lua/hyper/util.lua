@@ -412,4 +412,17 @@ function M.select_request(state, request)
     vim.api.nvim_input("<c-o>")
 end
 
+function M.get_status_hl(code)
+  if code < 200 then
+    return Config.hl_grp.HttpStatusInfo
+  end
+  if code < 300 then
+    return Config.hl_grp.HttpStatusOk
+  end
+  if code < 400 then
+    return Config.hl_grp.HttpStatusWarning
+  end
+  return Config.hl_grp.HttpStatusError
+end
+
 return M

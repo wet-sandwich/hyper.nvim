@@ -17,7 +17,7 @@ local strings = {
   clear_all = "[X] Clear All",
   response = "Response:",
   res_status = "STATUS %d",
-  res_time = "TIME %dms",
+  res_status_time = "%-25sTIME %dms",
   history = "Hi[S]tory (%d)",
   collections = "[C]ollections",
 }
@@ -90,12 +90,8 @@ function M.new(State)
       local res_time = body and math.floor(extras.response_time*1000) or 0
 
       local status = string.format(strings.res_status, res.status)
-      local time = string.format(strings.res_time, res_time)
-      response:append(table.concat({
-        status,
-        string.rep(" ", col_width - #status),
-        time,
-      }))
+      local str = string.format(strings.res_status_time, status, res_time)
+      response:append(str, { hl_group = Util.get_status_hl(res.status), end_col = 10 })
 
       response:nl()
       for _, line in ipairs(Util.pretty_format(body)) do
