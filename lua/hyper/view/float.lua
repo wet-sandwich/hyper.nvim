@@ -1,3 +1,5 @@
+local Config = require("hyper.config")
+
 local Float = {}
 Float.__index = Float
 
@@ -37,17 +39,17 @@ function Float:create_window()
 end
 
 function Float:render()
-  local lines = {}
+  vim.api.nvim_win_set_hl_ns(self.win, Config.ns)
+  vim.api.nvim_buf_set_option(self.buf, "modifiable", true)
+
   if type(self.content) == "function" then
     local text = self.content()
-    lines = text:read()
+    text:render(self.buf)
   else
-    lines = self.content
+    vim.api.nvim_buf_set_lines(self.buf, -2, -1, false, {})
+    vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, self.content)
   end
 
-  vim.api.nvim_buf_set_option(self.buf, "modifiable", true)
-  vim.api.nvim_buf_set_lines(self.buf, -2, -1, false, {})
-  vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, lines)
   vim.api.nvim_buf_set_option(self.buf, "modifiable", self.editable or false)
 end
 

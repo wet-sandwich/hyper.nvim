@@ -1,7 +1,6 @@
 local Float = require("hyper.view.float")
 local Text = require("hyper.view.text")
-
-local ns_hyper_selection = vim.api.nvim_create_namespace("hyper_selection")
+local Config = require("hyper.config")
 
 local Selector = {}
 Selector.__index = Selector
@@ -33,27 +32,33 @@ function Selector:create_window()
     end
   })
 
-  self:_format_list()
+  if type(self.options) == "function" then
+    self.content = self.options
+    self.num_opts = self.content():len()
+  else
+    self:_format_list()
+    self.num_opts = #self.options
+  end
   Float.create_window(self)
 
   if vim.api.nvim_get_current_win() == self.win then
     hide_cursor()
   end
 
-  if #self.options == 0 then return end
+  if type(self.options) == "table" and #self.options == 0 then return end
 
   self:update_highlight()
 end
 
 function Selector:update_highlight()
   if self.has_focus then
-    self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, 0, {
+    self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, 0, {
       end_col = self.width,
       hl_group = "PmenuSel",
       id = self.hl_extid,
     })
     if self.action_icon then
-      self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, ns_hyper_selection, self.selection, self.width-1, {
+      self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, self.width-1, {
         virt_text = {{self.action_icon, "PmenuSel"}},
         virt_text_pos = "overlay",
         id = self.vt_extid,
@@ -64,11 +69,11 @@ end
 
 function Selector:remove_highlight()
   if self.hl_extid then
-    vim.api.nvim_buf_del_extmark(self.buf, ns_hyper_selection, self.hl_extid)
+    vim.api.nvim_buf_del_extmark(self.buf, Config.ns, self.hl_extid)
   end
 
   if self.vt_extid then
-    vim.api.nvim_buf_del_extmark(self.buf, ns_hyper_selection, self.vt_extid)
+    vim.api.nvim_buf_del_extmark(self.buf, Config.ns, self.vt_extid)
   end
 end
 
@@ -88,7 +93,7 @@ function Selector:is_focused()
 end
 
 function Selector:select_next()
-  if self.selection < #self.options - 1 then
+  if self.selection < self.num_opts - 1 then
     self.selection = self.selection + 1
   else
     self.selection = 0
@@ -100,13 +105,14 @@ function Selector:select_previous()
   if self.selection > 0 then
     self.selection = self.selection - 1
   else
-    self.selection = #self.options - 1
+    self.selection = self.num_opts - 1
   end
   self:update_highlight()
 end
 
 function Selector:update_options(new_options)
   self.options = new_options
+  self.num_opts = #new_options
   self.selection = 0
   self:_format_list()
   self:render()

@@ -26,4 +26,13 @@ M.options = {
   max_history = 25,
 }
 
+M.ns = vim.api.nvim_create_namespace("hyper")
+
+M.hl_grp = {
+  HttpStatusOk = "DiagnosticFloatingOk",
+  HttpStatusInfo = "DiagnosticFloatingInfo",
+  HttpStatusWarning = "DiagnosticFloatingWarn",
+  HttpStatusError = "DiagnosticFloatingError",
+}
+
 return M

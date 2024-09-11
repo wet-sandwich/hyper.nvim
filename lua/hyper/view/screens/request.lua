@@ -17,7 +17,7 @@ local strings = {
   clear_all = "[X] Clear All",
   response = "Response:",
   res_status = "STATUS %d",
-  res_time = "TIME %dms",
+  res_status_time = "%-25sTIME %dms",
   history = "Hi[S]tory (%d)",
   collections = "[C]ollections",
 }
@@ -44,15 +44,12 @@ function M.new(State)
 
     -- query params and body
     local params = string.format(strings.query, Util.dict_length(state.query_params))
-    if Util.is_body_method(state.method) then
-      menu:append(table.concat({
-        params,
-        string.rep(" ", col_width - #params),
-        strings.body,
-      }))
-    else
-      menu:append(params)
-    end
+    local body_hl = not Util.is_body_method(state.method) and { hl_group = "Comment", end_col = col_width + 6, col = col_width } or nil
+    menu:append(table.concat({
+      params,
+      string.rep(" ", col_width - #params),
+      strings.body,
+    }), body_hl)
 
     -- headers and env variables
     local headers = string.format(strings.headers, Util.dict_length(state.headers))
@@ -90,12 +87,8 @@ function M.new(State)
       local res_time = body and math.floor(extras.response_time*1000) or 0
 
       local status = string.format(strings.res_status, res.status)
-      local time = string.format(strings.res_time, res_time)
-      response:append(table.concat({
-        status,
-        string.rep(" ", col_width - #status),
-        time,
-      }))
+      local str = string.format(strings.res_status_time, status, res_time)
+      response:append(str, { hl_group = Util.get_status_hl(res.status), end_col = 10 })
 
       response:nl()
       for _, line in ipairs(Util.pretty_format(body)) do

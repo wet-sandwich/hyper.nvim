@@ -3,6 +3,7 @@ local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
 local Util = require("hyper.util")
 local History = require("hyper.history")
+local Text = require("hyper.view.text")
 
 local width, height, row, col = Util.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
@@ -11,12 +12,14 @@ local M = {}
 
 function M.new(State)
   local function create_list()
-    local list = {}
+    local list = Text.new()
     for _, id in ipairs(History.order) do
       local req = History.requests[id]
-      local str = "%s  %s  %-6s  %s"
+      local tpl = "%s  %s  %-6s  %s"
       local short_url = string.gsub(req.url, "^https?://", "")
-      table.insert(list, str:format(req.timestamp, req.status, req.method, short_url))
+      local str = tpl:format(req.timestamp, req.status, req.method, short_url)
+      str = str .. (" "):rep(list_width - #str)
+      list:append(str, { hl_group = Util.get_status_hl(req.status), col = 22, end_col = 25 })
     end
     return list
   end
@@ -27,7 +30,7 @@ function M.new(State)
     col = col,
     width = list_width,
     height = height,
-    options = create_list(),
+    options = create_list,
     focused = true,
     action_icon = "↵",
   })
