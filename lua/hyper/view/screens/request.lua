@@ -44,15 +44,12 @@ function M.new(State)
 
     -- query params and body
     local params = string.format(strings.query, Util.dict_length(state.query_params))
-    if Util.is_body_method(state.method) then
-      menu:append(table.concat({
-        params,
-        string.rep(" ", col_width - #params),
-        strings.body,
-      }))
-    else
-      menu:append(params)
-    end
+    local body_hl = not Util.is_body_method(state.method) and { hl_group = "Comment", end_col = col_width + 6, col = col_width } or nil
+    menu:append(table.concat({
+      params,
+      string.rep(" ", col_width - #params),
+      strings.body,
+    }), body_hl)
 
     -- headers and env variables
     local headers = string.format(strings.headers, Util.dict_length(state.headers))
