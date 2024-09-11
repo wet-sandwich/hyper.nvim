@@ -2,6 +2,7 @@ local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
 local Util = require("hyper.util")
+local Text = require("hyper.view.text")
 
 local width, height, row, col = Util.get_viewbox()
 local list_width = math.floor(width * 0.3) - 2
@@ -13,7 +14,19 @@ function M.new(State, View)
   Util.sync_collections(State)
   local collections = State.get_state("collections")
 
+  local function noCollections()
+    return #collections == 0
+  end
+
+  local function emptyCollection(i)
+    return #collections[i].requests == 0
+  end
+
   local function coll_list()
+    if noCollections() then
+      return {"No collections found"}
+    end
+
     local list = {}
     for _, coll in ipairs(collections) do
       table.insert(list, coll.name)
@@ -22,6 +35,13 @@ function M.new(State, View)
   end
 
   local function req_list(idx)
+    if noCollections() then
+      return {""}
+    end
+    if emptyCollection(idx) then
+      return {"Collection is empty"}
+    end
+
     local reqs = {}
     for _, req in ipairs(collections[idx].requests) do
       table.insert(reqs, ("%-6s %s"):format(req.method, req.url))
@@ -59,6 +79,11 @@ function M.new(State, View)
   local function create_preview()
     local c_idx = coll_list_win.selection + 1
     local r_idx = req_list_win.selection + 1
+
+    if noCollections() or emptyCollection(c_idx) then
+      return Text.new()
+    end
+
     local req = collections[c_idx].requests[r_idx]
     return Util.create_request_preview(req)
   end
@@ -81,6 +106,9 @@ function M.new(State, View)
   })
 
   coll_list_win:add_keymap({"n", "<Tab>", function()
+    if noCollections() or emptyCollection(coll_list_win.selection + 1) then
+      return
+    end
     coll_list_win:toggle_focus()
     req_list_win:toggle_focus()
   end})
