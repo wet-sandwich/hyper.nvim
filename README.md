@@ -12,29 +12,13 @@ A tool to make requests using **Hyper**text Transfer Protocol (you know, HTTP) w
 
 ### Installation
 
-Use the latest tagged release.
+Install using your package manager of choice.
 
-Using [vim-plug](https://github.com/junegunn/vim-plug)
-
-```viml
-Plug 'nvim-lua/plenary.nvim'
-Plug 'wet-sandwich/hyper.nvim', { 'tag': '0.1.4' }
-```
-
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim)
-
-```lua
-use {
-  'wet-sandwich/hyper.nvim', tag = '0.1.4',
-  requires = { {'nvim-lua/plenary.nvim'} }
-}
-```
-
-Using [lazy.nvim](https://github.com/folke/lazy.nvim)
+Example using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
 {
-  'wet-sandwich/hyper.nvim', tag = '0.1.4',
+  'wet-sandwich/hyper.nvim',
   dependencies = { 'nvim-lua/plenary.nvim' }
 }
 ```
