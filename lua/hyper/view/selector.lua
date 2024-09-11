@@ -32,14 +32,20 @@ function Selector:create_window()
     end
   })
 
-  self:_format_list()
+  if type(self.options) == "function" then
+    self.content = self.options
+    self.num_opts = self.content():len()
+  else
+    self:_format_list()
+    self.num_opts = #self.options
+  end
   Float.create_window(self)
 
   if vim.api.nvim_get_current_win() == self.win then
     hide_cursor()
   end
 
-  if #self.options == 0 then return end
+  if type(self.options) == "table" and #self.options == 0 then return end
 
   self:update_highlight()
 end
@@ -87,7 +93,7 @@ function Selector:is_focused()
 end
 
 function Selector:select_next()
-  if self.selection < #self.options - 1 then
+  if self.selection < self.num_opts - 1 then
     self.selection = self.selection + 1
   else
     self.selection = 0
@@ -99,13 +105,14 @@ function Selector:select_previous()
   if self.selection > 0 then
     self.selection = self.selection - 1
   else
-    self.selection = #self.options - 1
+    self.selection = self.num_opts - 1
   end
   self:update_highlight()
 end
 
 function Selector:update_options(new_options)
   self.options = new_options
+  self.num_opts = #new_options
   self.selection = 0
   self:_format_list()
   self:render()
