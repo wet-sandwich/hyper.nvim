@@ -38,6 +38,8 @@ Type the letters displayed in brackets to open menus or to perform the correspon
 After navigating to another screen, type `<c-o>` to return to the main
 request/response screen.
 
+Use the command `:HyperJump` while in an http file to load the request under the cursor and open the main window.
+
 #### Body
 
 The body menu appears when a method that supports a body has been selected. The content entered must be valid JSON.
