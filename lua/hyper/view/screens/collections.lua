@@ -142,6 +142,7 @@ function M.new(State, View)
     local req = collections[coll_list_win.selection + 1].requests[req_list_win.selection + 1]
 
     Util.select_request(State, req)
+    vim.api.nvim_input("<c-o>")
   end})
 
   coll_list_win:add_keymap({"n", "j", function()

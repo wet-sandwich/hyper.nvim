@@ -4,6 +4,7 @@ local VariablesScreen = require("hyper.view.screens.variables")
 local CollectionScreen = require("hyper.view.screens.collections")
 local State = require("hyper.state")
 local Util = require("hyper.util")
+local http = require "hyper.http-parser"
 
 local M = {}
 M.screen = nil
@@ -62,6 +63,28 @@ function M:setup_cmds(mode)
       State.set_state("mode", "main")
       self.show()
     end)
+  end
+end
+
+function M:jump()
+  local path = vim.api.nvim_buf_get_name(0)
+  if vim.fn.filereadable(path) == 0 or path:match('.*%.http$') == nil then
+    vim.notify("HyperJump failed: must be in a valid http file", vim.log.levels.WARN)
+    return
+  end
+
+  local row = vim.api.nvim_win_get_cursor(0)[1]
+
+  local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
+  local requests = http.parse(lines)
+
+  for _, req in ipairs(requests) do
+    if row <= req._end then
+      Util.select_request(State, req)
+      State.set_state("mode", "main")
+      self.show()
+      break
+    end
   end
 end
 

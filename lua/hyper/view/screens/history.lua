@@ -76,6 +76,7 @@ function M.new(State)
     local request = History.requests[id]
 
     Util.select_request(State, request)
+    vim.api.nvim_input("<c-o>")
   end})
 
   return HistoryScreen
