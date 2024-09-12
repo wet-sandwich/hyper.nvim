@@ -8,6 +8,7 @@ local function reset_request()
     headers = {},
     body = nil,
     variables = {},
+    _end = nil,
   }
 end
 
@@ -109,6 +110,7 @@ function M.parse(file)
         if hash_comment == "###" then
           if gatheringRequest then
             gatheringRequest = false
+            req._end = i - 1
             table.insert(requests, req)
             req = reset_request()
           end
@@ -180,6 +182,7 @@ function M.parse(file)
     -- check for end of file, add current request
     if i == #file then
       if gatheringRequest then
+        req._end = i
         table.insert(requests, req)
       end
     end
