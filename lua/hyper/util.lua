@@ -374,7 +374,7 @@ function M.create_request_preview(req)
   if req ~= nil then
     preview:append(templates.url:format(req.method, req.url))
 
-    if req.query_params ~= nil then
+    if req.query_params ~= nil and next(req.query_params) ~= nil then
       preview:nl()
       preview:append("Query Params:")
       for key, val in pairs(req.query_params) do
