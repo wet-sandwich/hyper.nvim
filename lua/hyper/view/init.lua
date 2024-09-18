@@ -22,19 +22,19 @@ function M.show()
   Util.update_env_files(State)
 
   if mode == "main" then
-    M.screen = RequestScreen.new(State)
+    M.screen = RequestScreen.new(mode, State)
   end
 
   if mode == "history" then
-    M.screen = HistoryScreen.new(State)
+    M.screen = HistoryScreen.new(mode, State)
   end
 
   if mode == "variables" then
-    M.screen = VariablesScreen.new(State)
+    M.screen = VariablesScreen.new(mode, State)
   end
 
   if mode == "collections" then
-    M.screen = CollectionScreen.new(State, M)
+    M.screen = CollectionScreen.new(mode, State)
   end
 
   M.screen:display()
@@ -58,10 +58,10 @@ function M:setup_cmds(mode)
       M.show()
     end)
   else
-    self.screen:on_key("n", "<c-o>", function()
-      self.screen:hide()
+    M.screen:on_key("n", "<c-o>", function()
+      M.screen:hide()
       State.set_state("mode", "main")
-      self.show()
+      M.show()
     end)
   end
 end

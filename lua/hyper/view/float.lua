@@ -23,6 +23,7 @@ function Float:create_window()
     col = self.col,
     border = "rounded",
     title = self.title,
+    zindex = self.zindex or 50,
   })
 
   self.buf = bufnr
