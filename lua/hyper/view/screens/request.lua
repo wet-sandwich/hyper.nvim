@@ -24,7 +24,7 @@ local strings = {
 
 local M = {}
 
-function M.new(State)
+function M.new(mode, State)
 
   local col_width = Config.layout_config.col_width
   local width, height, row, col = Util.get_viewbox()
@@ -123,7 +123,7 @@ function M.new(State)
     content = create_http_response,
   })
 
-  local RequestScreen = Screen.new({ request_win, response_win })
+  local RequestScreen = Screen.new(mode, { request_win, response_win })
 
   response_win:add_autocmd("BufLeave", {
     callback = function()

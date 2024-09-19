@@ -14,6 +14,15 @@ function File:set_file(path)
   self.path = path
 end
 
+function File:create_window()
+  self:add_autocmd("BufLeave", {
+    callback = function()
+      self:save()
+    end,
+  })
+  Float.create_window(self)
+end
+
 function File:render()
   if self.path == nil then return end
   self.content = vim.fn.readfile(self.path)

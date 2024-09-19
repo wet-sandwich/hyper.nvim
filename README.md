@@ -82,3 +82,7 @@ Hyper supports collections via .http files. Navigate to the collections page and
 For any tokens not filled in by the parser with the available variables found in the .http file, hyper will attempt to replace the remaining tokens using values from the selected .env file (this allows sensitive information to stay out of the collection).
 
 ![hyper.collections](https://imgur.com/JC6NEBy.png)
+
+#### Miscellaneous
+
+Type `?` from any screen to open the help window which will show the available commands for that screen, close it with `q`.

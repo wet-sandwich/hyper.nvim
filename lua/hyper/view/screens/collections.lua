@@ -10,7 +10,7 @@ local coll_height = math.floor(height * 0.4)
 
 local M = {}
 
-function M.new(State, View)
+function M.new(mode, State)
   Util.sync_collections(State)
   local collections = State.get_state("collections")
 
@@ -97,13 +97,7 @@ function M.new(State, View)
     content = create_preview,
   })
 
-  local CollectionScreen = Screen.new({ coll_list_win, req_list_win, req_prev_win })
-
-  req_prev_win:add_autocmd("BufLeave", {
-    callback = function()
-      CollectionScreen:hide()
-    end
-  })
+  local CollectionScreen = Screen.new(mode, { coll_list_win, req_list_win, req_prev_win })
 
   coll_list_win:add_keymap({"n", "<Tab>", function()
     if noCollections() or emptyCollection(coll_list_win.selection + 1) then
@@ -130,12 +124,6 @@ function M.new(State, View)
       req_list_win:select_previous()
       req_prev_win:render()
     end
-  end})
-
-  req_list_win:add_keymap({"n", "<c-o>", function()
-    CollectionScreen:hide()
-    State.set_state("mode", "main")
-    View.show()
   end})
 
   req_list_win:add_keymap({"n", "<CR>", function()
