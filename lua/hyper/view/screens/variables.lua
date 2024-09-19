@@ -55,13 +55,6 @@ function M.new(mode, State)
 
   local VariablesScreen = Screen.new(mode, { file_picker, preview_win })
 
-  preview_win:add_autocmd("BufLeave", {
-    callback = function()
-      preview_win:save()
-      VariablesScreen:hide()
-    end
-  })
-
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()
     file_picker:hover_next()

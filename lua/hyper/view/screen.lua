@@ -13,6 +13,12 @@ end
 
 function Screen:display()
   for _, win in ipairs(self) do
+    win:add_autocmd("WinClosed", {
+      callback = function()
+        self:hide()
+      end,
+      nested = true,
+    })
     win:create_window()
     if win.enter then
       self.main = win
