@@ -5,5 +5,5 @@ vim.api.nvim_create_user_command("Hyper", function(cmd)
 end, {})
 
 vim.api.nvim_create_user_command("HyperJump", function(cmd)
-  View:jump()
+  View.jump()
 end, {})

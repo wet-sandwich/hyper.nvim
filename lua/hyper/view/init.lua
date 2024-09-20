@@ -66,7 +66,7 @@ function M:setup_cmds(mode)
   end
 end
 
-function M:jump()
+function M.jump()
   local path = vim.api.nvim_buf_get_name(0)
   if vim.fn.filereadable(path) == 0 or path:match('.*%.http$') == nil then
     vim.notify("HyperJump failed: must be in a valid http file", vim.log.levels.WARN)
@@ -82,7 +82,7 @@ function M:jump()
     if row <= req._end then
       Util.select_request(State, req)
       State.set_state("mode", "main")
-      self.show()
+      M.show()
       break
     end
   end
