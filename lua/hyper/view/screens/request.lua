@@ -3,7 +3,9 @@ local Window = require("hyper.view.float")
 local Screen = require("hyper.view.screen")
 local Menu = require("hyper.view.menu")
 local Config = require("hyper.config")
-local Util = require("hyper.util")
+local Ui = require("hyper.utils.ui")
+local Http = require("hyper.utils.http")
+local Table = require("hyper.utils.table")
 local History = require("hyper.history")
 
 local strings = {
@@ -27,7 +29,7 @@ local M = {}
 function M.new(mode, State)
 
   local col_width = Config.layout_config.col_width
-  local width, height, row, col = Util.get_viewbox()
+  local width, height, row, col = Ui.get_viewbox()
 
   local function create_menu()
     local state = State.get_state()
@@ -43,8 +45,8 @@ function M.new(mode, State)
     }))
 
     -- query params and body
-    local params = string.format(strings.query, Util.dict_length(state.query_params))
-    local body_hl = not Util.is_body_method(state.method) and { hl_group = "Comment", end_col = col_width + 6, col = col_width } or nil
+    local params = string.format(strings.query, Table.dict_length(state.query_params))
+    local body_hl = not Http.is_body_method(state.method) and { hl_group = "Comment", end_col = col_width + 6, col = col_width } or nil
     menu:append(table.concat({
       params,
       string.rep(" ", col_width - #params),
@@ -52,7 +54,7 @@ function M.new(mode, State)
     }), body_hl)
 
     -- headers and env variables
-    local headers = string.format(strings.headers, Util.dict_length(state.headers))
+    local headers = string.format(strings.headers, Table.dict_length(state.headers))
     menu:append(table.concat({
       headers,
       string.rep(" ", col_width - #headers),
@@ -83,15 +85,15 @@ function M.new(mode, State)
     local res = State.get_state("res")
 
     if res ~= nil then
-      local body, extras = Util.parse_response_body(res.body)
+      local body, extras = Http.parse_response_body(res.body)
       local res_time = body and math.floor(extras.response_time*1000) or 0
 
       local status = string.format(strings.res_status, res.status)
       local str = string.format(strings.res_status_time, status, res_time)
-      response:append(str, { hl_group = Util.get_status_hl(res.status), end_col = 10 })
+      response:append(str, { hl_group = Ui.get_status_hl(res.status), end_col = 10 })
 
       response:nl()
-      for _, line in ipairs(Util.pretty_format(body)) do
+      for _, line in ipairs(Ui.pretty_format(body)) do
         response:append(line)
       end
     end
@@ -171,7 +173,7 @@ function M.new(mode, State)
       height = res_height,
       filetype = "sh",
       callback = function(entry)
-        State.set_state("query_params", Util.lines_to_kv(entry, "="))
+        State.set_state("query_params", Table.lines_to_kv(entry, "="))
         request_win:render()
       end,
     })
@@ -179,7 +181,7 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "B", function()
     local state = State.get_state()
-    if Util.is_body_method(state.method) then
+    if Http.is_body_method(state.method) then
       Menu.entry(state.body, {
         title = "Body",
         overlay = true,
@@ -203,7 +205,7 @@ function M.new(mode, State)
       height = res_height,
       separator = ": ",
       callback = function(entry)
-        State.set_state("headers", Util.lines_to_kv(entry, ":"))
+        State.set_state("headers", Table.lines_to_kv(entry, ":"))
         request_win:render()
       end,
     })
@@ -217,7 +219,7 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "R", function()
     local state = State.get_state()
-    local response = Util.http_request(state)
+    local response = Http.http_request(state)
     State.set_state("res", response)
     History.add_item(state)
     response_win:render()

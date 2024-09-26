@@ -1,17 +1,19 @@
 local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
-local Util = require("hyper.util")
+local Collections = require("hyper.collections")
 local Text = require("hyper.view.text")
+local Ui = require("hyper.utils.ui")
+local Http = require("hyper.utils.http")
 
-local width, height, row, col = Util.get_viewbox()
+local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.3) - 2
 local coll_height = math.floor(height * 0.4)
 
 local M = {}
 
 function M.new(mode, State)
-  Util.sync_collections(State)
+  Collections.sync_collections(State)
   local collections = State.get_state("collections")
 
   local function noCollections()
@@ -85,7 +87,7 @@ function M.new(mode, State)
     end
 
     local req = collections[c_idx].requests[r_idx]
-    return Util.create_request_preview(req)
+    return Ui.create_request_preview(req)
   end
 
   local req_prev_win = Float.new({
@@ -129,7 +131,7 @@ function M.new(mode, State)
   req_list_win:add_keymap({"n", "<CR>", function()
     local req = collections[coll_list_win.selection + 1].requests[req_list_win.selection + 1]
 
-    Util.select_request(State, req)
+    Http.select_request(State, req)
     vim.api.nvim_input("<c-o>")
   end})
 

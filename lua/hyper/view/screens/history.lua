@@ -1,11 +1,12 @@
 local Float = require("hyper.view.float")
 local Selector = require("hyper.view.selector")
 local Screen = require("hyper.view.screen")
-local Util = require("hyper.util")
+local Ui = require("hyper.utils.ui")
+local Http = require("hyper.utils.http")
 local History = require("hyper.history")
 local Text = require("hyper.view.text")
 
-local width, height, row, col = Util.get_viewbox()
+local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
 
 local M = {}
@@ -19,7 +20,7 @@ function M.new(mode, State)
       local short_url = string.gsub(req.url, "^https?://", "")
       local str = tpl:format(req.timestamp, req.status, req.method, short_url)
       str = str .. (" "):rep(list_width - #str)
-      list:append(str, { hl_group = Util.get_status_hl(req.status), col = 22, end_col = 25 })
+      list:append(str, { hl_group = Ui.get_status_hl(req.status), col = 22, end_col = 25 })
     end
     return list
   end
@@ -38,7 +39,7 @@ function M.new(mode, State)
   local function create_preview()
     local id = History.order[list_win.selection + 1]
     local req = History.requests[id]
-    return Util.create_request_preview(req)
+    return Ui.create_request_preview(req)
   end
 
   local preview_win = Float.new({
@@ -75,7 +76,7 @@ function M.new(mode, State)
     local id = History.order[list_win.selection + 1]
     local request = History.requests[id]
 
-    Util.select_request(State, request)
+    Http.select_request(State, request)
     vim.api.nvim_input("<c-o>")
   end})
 

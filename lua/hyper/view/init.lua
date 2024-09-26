@@ -3,8 +3,8 @@ local HistoryScreen = require("hyper.view.screens.history")
 local VariablesScreen = require("hyper.view.screens.variables")
 local CollectionScreen = require("hyper.view.screens.collections")
 local State = require("hyper.state")
-local Util = require("hyper.util")
-local http = require "hyper.http-parser"
+local Envs = require("hyper.envs")
+local Http = require("hyper.utils.http")
 
 local M = {}
 M.screen = nil
@@ -19,7 +19,7 @@ function M.show()
   end
 
   local mode = State.get_state("mode") or "main"
-  Util.update_env_files(State)
+  Envs.update_env_files(State)
 
   if mode == "main" then
     M.screen = RequestScreen.new(mode, State)
@@ -76,11 +76,11 @@ function M.jump()
   local row = vim.api.nvim_win_get_cursor(0)[1]
 
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, true)
-  local requests = http.parse(lines)
+  local requests = Http.parse(lines)
 
   for _, req in ipairs(requests) do
     if row <= req._end then
-      Util.select_request(State, req)
+      Http.select_request(State, req)
       State.set_state("mode", "main")
       M.show()
       break
