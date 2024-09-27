@@ -49,7 +49,7 @@ local function replace_tokens(str, tbl)
     newstr = newstr:gsub(token, value)
   end
   if newstr:find("{{.+}}") ~= nil then
-    error("Unreplaced token in string: " .. newstr)
+    vim.notify(string.format("Unreplaced token in string: '%s'", newstr), vim.log.levels.WARN)
   end
   return newstr
 end
