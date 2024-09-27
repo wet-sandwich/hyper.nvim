@@ -3,8 +3,8 @@ local uv = vim.loop
 local M = {}
 
 function M.read_file(file)
-  if uv.fs_stat(file) == nil then
-    return nil
+  if file == nil or uv.fs_stat(file) == nil then
+    return ""
   end
 
   local f = assert(io.open(file, "r"))

@@ -1,5 +1,6 @@
 local curl = require("plenary.curl")
 local http = require("hyper.http-parser")
+local Fs = require("hyper.utils.fs")
 local Ui = require("hyper.utils.ui")
 local Table = require("hyper.utils.table")
 
@@ -25,13 +26,6 @@ function M.parse_response_body(body_str)
     extras[k] = tonumber(v) or v
   end
   return body, extras
-end
-
-local function read_file(path)
-  if path == nil then
-    return {}
-  end
-  return vim.fn.readfile(path)
 end
 
 local function filter_params(params)
@@ -90,7 +84,7 @@ end
 function M.http_request(opts)
   local raw = {"-w response_time=%{time_total}"}
 
-  local env_lines = read_file(opts.env.selected)
+  local env_lines = Table.string_to_table(Fs.read_file(opts.env.selected))
 
   local filled_opts = substitute_envars({
     query_params = filter_params(opts.query_params),

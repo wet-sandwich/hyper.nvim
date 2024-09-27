@@ -19,4 +19,14 @@ function M.lines_to_kv(lines, sep)
   return tbl
 end
 
+function M.string_to_table(str)
+  local tbl = {}
+  if str ~= nil then
+    for line in str:gmatch("[^\r\n]+") do
+      table.insert(tbl, line)
+    end
+  end
+  return tbl
+end
+
 return M
