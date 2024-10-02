@@ -17,14 +17,30 @@ function M.is_body_method(method)
 end
 
 function M.parse_response_body(body_str)
-  local i = string.find(body_str, "}%s+response_time=")
-  local body = vim.json.decode(string.sub(body_str, 1, i))
-
+  local i = string.find(body_str, "%s+response_time=")
+  local body = string.sub(body_str, 1, i)
   local write_out = string.sub(body_str, i+1, -1)
+
   local extras = {}
   for k, v in string.gmatch(write_out, "(%S+)=(%S+)") do
     extras[k] = tonumber(v) or v
   end
+
+  if vim.fn.executable("jq") == 1 then
+    local jobid = vim.fn.jobstart({"jq", "."}, {
+      on_stdout = function(_, out, _)
+        local str = table.concat(out, "\n")
+        if str ~= "" then
+          body = str
+        end
+      end,
+    })
+    vim.fn.chansend(jobid, body)
+    vim.fn.chanclose(jobid, "stdin")
+
+    vim.fn.jobwait({ jobid }, -1)
+  end
+
   return body, extras
 end
 

@@ -93,9 +93,7 @@ function M.new(mode, State)
       response:append(str, { hl_group = Ui.get_status_hl(res.status), end_col = 10 })
 
       response:nl()
-      for _, line in ipairs(Ui.pretty_format(body)) do
-        response:append(line)
-      end
+      response:append(body)
     end
 
     return response

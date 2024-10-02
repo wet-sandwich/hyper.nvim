@@ -9,7 +9,10 @@ function Text.new()
 end
 
 function Text:append(str, hl)
-  table.insert(self._lines, { str = str, hl = hl })
+  local lines = vim.fn.split(str, "\n")
+  for _, line in ipairs(lines) do
+    table.insert(self._lines, { str = line, hl = hl })
+  end
 end
 
 function Text:nl()
