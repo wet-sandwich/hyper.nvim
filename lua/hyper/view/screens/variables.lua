@@ -1,9 +1,9 @@
 local File = require("hyper.view.file")
 local Radio = require("hyper.view.radio")
 local Screen = require("hyper.view.screen")
-local Util = require("hyper.util")
+local Ui = require("hyper.utils.ui")
 
-local width, height, row, col = Util.get_viewbox()
+local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.4)
 
 local M = {}

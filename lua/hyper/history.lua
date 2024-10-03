@@ -1,4 +1,5 @@
-local Util = require("hyper.util")
+local Fs = require("hyper.utils.fs")
+local Http = require("hyper.utils.http")
 local Config = require("hyper.config")
 
 local M = {}
@@ -12,14 +13,14 @@ local initial = {
 
 function M.read()
   pcall(function()
-    history = vim.json.decode(Util.read_file(Config.options.history))
+    history = vim.json.decode(Fs.read_file(Config.options.history))
   end)
   history = vim.tbl_deep_extend("force", {}, initial, history or {})
 end
 
 function M.write()
   vim.fn.mkdir(vim.fn.fnamemodify(Config.options.history, ":p:h"), "p")
-  Util.write_file(Config.options.history, vim.json.encode(history))
+  Fs.write_file(Config.options.history, vim.json.encode(history))
 end
 
 function M.__index(_, key)
@@ -45,12 +46,12 @@ function M.add_item(state)
   request.env = nil
   request.res = nil
   request.mode = nil
-  if not Util.is_body_method(request.method) then
+  if not Http.is_body_method(request.method) then
     request.body = nil
   end
 
   local timestamp = vim.fn.strftime("%b %d %Y %T")
-  local id = Util.hash_http_request(request)
+  local id = Http.hash_http_request(request)
   if history.requests[id] ~= nil then
     -- request already exists in history, move to top of order array
     for order, existing_id in ipairs(history.order) do

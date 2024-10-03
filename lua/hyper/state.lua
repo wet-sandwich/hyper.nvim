@@ -1,5 +1,5 @@
 local Config = require("hyper.config")
-local Util = require("hyper.util")
+local Fs = require("hyper.utils.fs")
 
 local M = {}
 
@@ -51,7 +51,7 @@ end
 function M.read()
   local saved_state = {}
   if pcall(function()
-    saved_state = vim.json.decode(Util.read_file(Config.options.state))
+    saved_state = vim.json.decode(Fs.read_file(Config.options.state))
   end) then
     data = vim.tbl_deep_extend("force", default_state, saved_state)
   else
@@ -64,7 +64,7 @@ function M.write()
   local state = vim.deepcopy(data)
   state.res = nil
   state.mode = nil
-  Util.write_file(Config.options.state, vim.json.encode(state))
+  Fs.write_file(Config.options.state, vim.json.encode(state))
 end
 
 return M
