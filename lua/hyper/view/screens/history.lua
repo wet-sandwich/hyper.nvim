@@ -34,6 +34,7 @@ function M.new(mode, State)
     options = create_list,
     focused = true,
     action_icon = "↵",
+    enter = true,
   })
 
   local function create_preview()
@@ -48,7 +49,6 @@ function M.new(mode, State)
     col = col + list_width + 2,
     width = width - list_width - 2,
     height = height,
-    enter = true,
     content = create_preview
   })
 
@@ -60,17 +60,17 @@ function M.new(mode, State)
     end
   })
 
-  preview_win:add_keymap({"n", "<c-n>", function()
+  list_win:add_keymap({"n", "j", function()
     list_win:select_next()
     preview_win:render()
   end})
 
-  preview_win:add_keymap({"n", "<c-p>", function()
+  list_win:add_keymap({"n", "k", function()
     list_win:select_previous()
     preview_win:render()
   end})
 
-  preview_win:add_keymap({"n", "<CR>", function()
+  list_win:add_keymap({"n", "<CR>", function()
     if #History.order == 0 then return end
 
     local id = History.order[list_win.selection + 1]
