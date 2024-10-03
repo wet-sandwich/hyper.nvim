@@ -6,6 +6,7 @@ local Selector = {}
 Selector.__index = Selector
 
 function Selector.new(opts)
+  opts.hide_cursor = true
   local self = Float.new(opts)
   self.options = opts.options or {}
   self.selection = 0
@@ -15,23 +16,7 @@ function Selector.new(opts)
   return self
 end
 
-local function hide_cursor()
-  vim.go.guicursor = "a:Cursor/lCursor"
-  vim.cmd("hi Cursor blend=100")
-end
-
 function Selector:create_window()
-  self:add_autocmd("WinEnter", {
-    callback = hide_cursor
-  })
-
-  self:add_autocmd("WinLeave", {
-    callback = function()
-      vim.go.guicursor = vim.g.prev_cursor
-      vim.cmd("hi Cursor blend=0")
-    end
-  })
-
   if type(self.options) == "function" then
     self.content = self.options
     self.num_opts = self.content():len()
@@ -40,10 +25,6 @@ function Selector:create_window()
     self.num_opts = #self.options
   end
   Float.create_window(self)
-
-  if vim.api.nvim_get_current_win() == self.win then
-    hide_cursor()
-  end
 
   if type(self.options) == "table" and #self.options == 0 then return end
 
