@@ -7,6 +7,7 @@ local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
+local Select = require("hyper.view.popup-select")
 
 local strings = {
   method = "[M]ethod: ",
@@ -135,13 +136,17 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "M", function()
     local methods = {"GET", "PUT", "POST", "PATCH", "DELETE"}
-    Menu.select_menu(methods, {
+    Select.select({
       title = "Method",
-      width = 30,
       row = -req_height - 2,
       col = 0,
-      callback = function(selection)
-        State.set_state("method", methods[selection])
+      width = 30,
+      options = methods,
+      focused = true,
+      action_icon = "↵",
+      enter = true,
+      callback = function(index)
+        State.set_state("method", methods[index])
         request_win:render()
       end,
     })

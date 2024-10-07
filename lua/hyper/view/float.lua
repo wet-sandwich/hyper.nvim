@@ -21,7 +21,7 @@ function Float:create_window()
   local bufnr = vim.api.nvim_create_buf(false, true)
   local winid = vim.api.nvim_open_win(bufnr, self.enter or false, {
     style = "minimal",
-    relative = "editor",
+    relative = self.relative or "editor",
     width = self.width,
     height = self.height,
     row = self.row,
