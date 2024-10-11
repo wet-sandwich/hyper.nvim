@@ -156,7 +156,7 @@ function M.parse(file)
 
     -- check for header
     if not skip and gatheringHeaders then
-      local header, value = line:match("^([%a-]+): (.+)")
+      local header, value = line:match("^([%a-_]+): (.+)")
       if header ~= nil and value ~= nil then
         req.headers[header] = value
         skip = true
