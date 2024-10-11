@@ -12,11 +12,16 @@ function Float.new(opts)
   return opts
 end
 
+local function hide_cursor()
+  vim.go.guicursor = "a:Cursor/lCursor"
+  vim.cmd("hi Cursor blend=100")
+end
+
 function Float:create_window()
   local bufnr = vim.api.nvim_create_buf(false, true)
   local winid = vim.api.nvim_open_win(bufnr, self.enter or false, {
     style = "minimal",
-    relative = "editor",
+    relative = self.relative or "editor",
     width = self.width,
     height = self.height,
     row = self.row,
@@ -31,6 +36,23 @@ function Float:create_window()
 
   if self.filetype ~= nil then
     vim.bo.ft = self.filetype
+  end
+
+  if self.hide_cursor then
+    self:add_autocmd("WinEnter", {
+      callback = hide_cursor
+    })
+
+    self:add_autocmd("WinLeave", {
+      callback = function()
+        vim.go.guicursor = vim.g.prev_cursor
+        vim.cmd("hi Cursor blend=0")
+      end
+    })
+
+    if vim.api.nvim_get_current_win() == self.win then
+      hide_cursor()
+    end
   end
 
   self:_disable_jump()

@@ -1,12 +1,12 @@
 local Text = require("hyper.view.text")
 local Window = require("hyper.view.float")
 local Screen = require("hyper.view.screen")
-local Menu = require("hyper.view.menu")
 local Config = require("hyper.config")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
+local Popup = require("hyper.view.popup")
 
 local strings = {
   method = "[M]ethod: ",
@@ -135,13 +135,14 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "M", function()
     local methods = {"GET", "PUT", "POST", "PATCH", "DELETE"}
-    Menu.select_menu(methods, {
+    Popup.select({
       title = "Method",
-      width = 30,
       row = -req_height - 2,
       col = 0,
-      callback = function(selection)
-        State.set_state("method", methods[selection])
+      width = 30,
+      options = methods,
+      callback = function(index)
+        State.set_state("method", methods[index])
         request_win:render()
       end,
     })
@@ -149,7 +150,7 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "U", function()
     local state = State.get_state()
-    Menu.entry(state.url, {
+    Popup.entry(state.url, {
       title = "URL",
       row = -req_height - 2,
       col = Config.layout_config.col_width,
@@ -164,7 +165,7 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "P", function()
     local state = State.get_state()
-    Menu.entry(state.query_params, {
+    Popup.entry(state.query_params, {
       title = "Query Parameters",
       overlay = true,
       width = width,
@@ -180,7 +181,7 @@ function M.new(mode, State)
   response_win:add_keymap({"n", "B", function()
     local state = State.get_state()
     if Http.is_body_method(state.method) then
-      Menu.entry(state.body, {
+      Popup.entry(state.body, {
         title = "Body",
         overlay = true,
         width = width,
@@ -196,7 +197,7 @@ function M.new(mode, State)
 
   response_win:add_keymap({"n", "H", function()
     local state = State.get_state()
-    Menu.entry(state.headers, {
+    Popup.entry(state.headers, {
       title = "Headers",
       overlay = true,
       width = width,

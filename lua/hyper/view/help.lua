@@ -17,8 +17,8 @@ local help_text = {
   history = {
     "<c-c> close window",
     "<c-o> return to main window",
-    "<c-n> select next history item",
-    "<c-p> select previous history item",
+    "    j select next history item",
+    "    k select previous history item",
     " <CR> select current request",
     "    q close help window",
   },
