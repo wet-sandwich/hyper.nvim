@@ -70,7 +70,7 @@ function M.new(mode, State)
 
   local req_list_win = Selector.new({
     title = req_list_title(),
-    row = coll_height + 4,
+    row = row + coll_height + 2,
     col = col,
     width = list_width,
     height = height - coll_height - 2,
