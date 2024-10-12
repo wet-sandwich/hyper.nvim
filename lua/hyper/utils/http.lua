@@ -98,7 +98,7 @@ local function substitute_envars(tt, variables)
 end
 
 function M.http_request(opts)
-  local raw = {"-w response_time=%{time_total}"}
+  local raw = {"-w response_time=%{time_total} response_size=%{size_download}"}
 
   local env_lines = Table.string_to_table(Fs.read_file(opts.env.selected))
 
