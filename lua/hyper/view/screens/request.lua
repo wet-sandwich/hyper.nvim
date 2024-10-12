@@ -19,7 +19,9 @@ local strings = {
   clear_all = "[X] Clear All",
   response = "Response:",
   res_status = "STATUS %d",
-  res_status_time = "%-25sTIME %dms",
+  res_time = "TIME %dms",
+  res_size = "SIZE %dB",
+  response_line = "%-25s%-25s%s",
   history = "Hi[S]tory (%d)",
   collections = "[C]ollections",
 }
@@ -89,7 +91,9 @@ function M.new(mode, State)
       local res_time = body and math.floor(extras.response_time*1000) or 0
 
       local status = string.format(strings.res_status, res.status)
-      local str = string.format(strings.res_status_time, status, res_time)
+      local time = string.format(strings.res_time, res_time)
+      local size = string.format(strings.res_size, extras.response_size)
+      local str = string.format(strings.response_line, status, time, size)
       response:append(str, { hl_group = Ui.get_status_hl(res.status), end_col = 10 })
 
       response:nl()
