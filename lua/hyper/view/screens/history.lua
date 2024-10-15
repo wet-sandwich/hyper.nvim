@@ -80,6 +80,15 @@ function M.new(mode, State)
     vim.api.nvim_input("<c-o>")
   end})
 
+  list_win:add_keymap({"n", "<del>", function()
+    if #History.order == 0 then return end
+
+    list_win:delete_item(function(index)
+      History.delete_item(index)
+      preview_win:render()
+    end)
+  end})
+
   return HistoryScreen
 end
 

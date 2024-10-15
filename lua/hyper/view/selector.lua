@@ -99,6 +99,13 @@ function Selector:update_options(new_options)
   self:render()
 end
 
+function Selector:delete_item(f)
+  f(self.selection + 1)
+  self.num_opts = self.num_opts - 1
+  self:render()
+  self:update_highlight()
+end
+
 function Selector:_format_list()
   local lines = Text.new()
   for _, item in ipairs(self.options) do
