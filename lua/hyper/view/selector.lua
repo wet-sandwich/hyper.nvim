@@ -1,6 +1,7 @@
 local Float = require("hyper.view.float")
 local Text = require("hyper.view.text")
 local Config = require("hyper.config")
+local Dialog = require("hyper.view.dialog")
 
 local Selector = {}
 Selector.__index = Selector
@@ -97,6 +98,18 @@ function Selector:update_options(new_options)
   self.selection = 0
   self:_format_list()
   self:render()
+end
+
+function Selector:delete_item(f)
+  Dialog.confirm(
+    "Are you sure you want to delete the selected item? (y/n)",
+    function()
+      f(self.selection + 1)
+      self.num_opts = self.num_opts - 1
+      self:render()
+      self:update_highlight()
+    end
+  )
 end
 
 function Selector:_format_list()

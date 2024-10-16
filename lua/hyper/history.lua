@@ -81,4 +81,20 @@ function M.add_item(state)
   M.write()
 end
 
+function M.delete_item(index)
+  if not history then
+    M.read()
+  end
+  if not history then
+    return
+  end
+
+  local id = history.order[index]
+
+  history.requests[id] = nil
+  table.remove(history.order, index)
+
+  M.write()
+end
+
 return setmetatable(M, M)
