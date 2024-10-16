@@ -20,6 +20,7 @@ local help_text = {
     "    j select next history item",
     "    k select previous history item",
     " <CR> select current request",
+    "<del> delete current request",
     "    q close help window",
   },
   variables = {
