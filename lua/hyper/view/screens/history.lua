@@ -8,6 +8,8 @@ local Text = require("hyper.view.text")
 
 local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
+local req_width = width - list_width - 2
+local cutoff = list_width - 2
 
 local M = {}
 
@@ -19,6 +21,9 @@ function M.new(mode, State)
       local tpl = "%s  %s  %-6s  %s"
       local short_url = string.gsub(req.url, "^https?://", "")
       local str = tpl:format(req.timestamp, req.status, req.method, short_url)
+      if #str > cutoff then
+        str = string.sub(str, 1, cutoff - 3) .. "..."
+      end
       str = str .. (" "):rep(list_width - #str)
       list:append(str, { hl_group = Ui.get_status_hl(req.status), col = 22, end_col = 25 })
     end
@@ -40,14 +45,14 @@ function M.new(mode, State)
   local function create_preview()
     local id = History.order[list_win.selection + 1]
     local req = History.requests[id]
-    return Ui.create_request_preview(req)
+    return Ui.create_request_preview(req, req_width)
   end
 
   local preview_win = Float.new({
     title = "Request",
     row = row,
     col = col + list_width + 2,
-    width = width - list_width - 2,
+    width = req_width,
     height = height,
     content = create_preview
   })
