@@ -60,7 +60,20 @@ function M.ltrim(str)
   return str:match'^%s*(.*)'
 end
 
-function M.create_request_preview(req)
+function M.line_wrap(str, len)
+  if #str <= len then
+    return str
+  end
+  local lines = {}
+  local a = str
+  repeat
+    table.insert(lines, string.sub(a, 1, len))
+    a = string.sub(a, len + 1, -1)
+  until #a == 0
+  return table.concat(lines, "\n")
+end
+
+function M.create_request_preview(req, width)
   local templates = {
     url = "%-6s %s",
     params = "  %s=%s",
@@ -70,7 +83,8 @@ function M.create_request_preview(req)
   local preview = Text.new()
 
   if req ~= nil then
-    preview:append(templates.url:format(req.method, req.url))
+    local url_str = M.line_wrap(templates.url:format(req.method, req.url), width)
+    preview:append(url_str)
 
     if req.query_params ~= nil and next(req.query_params) ~= nil then
       preview:nl()
