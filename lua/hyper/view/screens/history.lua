@@ -8,6 +8,7 @@ local Text = require("hyper.view.text")
 
 local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
+local cutoff = list_width - 2
 
 local M = {}
 
@@ -19,6 +20,9 @@ function M.new(mode, State)
       local tpl = "%s  %s  %-6s  %s"
       local short_url = string.gsub(req.url, "^https?://", "")
       local str = tpl:format(req.timestamp, req.status, req.method, short_url)
+      if #str > cutoff then
+        str = string.sub(str, 1, cutoff - 3) .. "..."
+      end
       str = str .. (" "):rep(list_width - #str)
       list:append(str, { hl_group = Ui.get_status_hl(req.status), col = 22, end_col = 25 })
     end
