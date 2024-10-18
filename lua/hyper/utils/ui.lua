@@ -61,7 +61,7 @@ function M.ltrim(str)
 end
 
 function M.line_wrap(str, len)
-  if #str <= len then
+  if len == nil or #str <= len then
     return str
   end
   local lines = {}
