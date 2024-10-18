@@ -72,7 +72,7 @@ Enter headers as `Header-Name: value` pairs.
 
 #### Request History
 
-Hyper will track your 25 previous unique requests. Use `<c-n>` and `<c-p>` to cycle through the list and preview the full request. Type `<cr>` to select a previous request and copy its contents to the active request. Type <del> to remove the selected request from the history.
+Hyper will track your 25 previous unique requests. Use `<c-n>` and `<c-p>` to cycle through the list and preview the full request. Type `<cr>` to select a previous request and copy its contents to the active request. Type `<del>` to remove the selected request from the history.
 
 Repeating a previous request moves it to the top of the list with an updated timestamp instead of creating a new entry.
 
