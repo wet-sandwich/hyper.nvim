@@ -106,6 +106,9 @@ function Selector:delete_item(f)
     function()
       f(self.selection + 1)
       self.num_opts = self.num_opts - 1
+      if self.selection > self.num_opts - 1 then
+        self.selection = self.selection - 1
+      end
       self:render()
       self:update_highlight()
     end
