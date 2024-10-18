@@ -38,7 +38,11 @@ Type the letters displayed in brackets to open menus or to perform the correspon
 After navigating to another screen, type `<c-o>` to return to the main
 request/response screen.
 
-Use the command `:HyperJump` while in an http file to load the request under the cursor and open the main window.
+Use the command `:HyperJump` while in an http file to load the request under the cursor and open the main window, or add to a keymap:
+
+```lua
+vim.keymap.set('n', '<leader>hj', require('hyper.view').jump, {})
+```
 
 #### Body
 
@@ -51,6 +55,8 @@ The body menu appears when a method that supports a body has been selected. The 
 Hyper will search the current working directory (and up to four levels deep) for any .env files (including those with prefixes or suffixes), and will try to auto-select one for you. If multiple files are found you can select which one to use, and you can edit the selected file from within Hyper. Use `<c-n>` and `<c-p>` to move to different files and preview their contents. Type `<Tab>` to select a file to be used to fill in variables when making a request. The current selected file is marked with a check mark.
 
 Enter variables as `key=value` pairs. To use your variables in other places, wrap the key in double braces: `{{key}}`.
+
+Files are auto-saved upon leaving the buffer.
 
 ![hyper.env_variables](https://imgur.com/F30OwS9.png)
 
@@ -66,12 +72,9 @@ Enter headers as `Header-Name: value` pairs.
 
 #### Request History
 
-Hyper will track your 25 previous unique requests. Use `<c-n>` and `<c-p>` to
-cycle through the list and preview the full request. Type `<cr>` to select a
-previous request and copy its contents to the active request.
+Hyper will track your 25 previous unique requests. Use `<c-n>` and `<c-p>` to cycle through the list and preview the full request. Type `<cr>` to select a previous request and copy its contents to the active request. Type <del> to remove the selected request from the history.
 
-Repeating a previous request moves it to the top of the list with an updated
-timestamp instead of creating a new entry.
+Repeating a previous request moves it to the top of the list with an updated timestamp instead of creating a new entry.
 
 ![hyper.request_history](https://imgur.com/fpXRibI.png)
 
@@ -83,6 +86,6 @@ For any tokens not filled in by the parser with the available variables found in
 
 ![hyper.collections](https://imgur.com/JC6NEBy.png)
 
-#### Miscellaneous
+#### Help Window
 
 Type `?` from any screen to open the help window which will show the available commands for that screen, close it with `q`.
