@@ -8,6 +8,9 @@ local function validate_opts(opts)
   assert(type(opts.history_limit) == "number" and opts.history_limit == math.floor(opts.history_limit),
     "hyper.opts.history_limit must be an integer")
 
+  assert(type(opts.search_depth) == "number" and opts.search_depth == math.floor(opts.search_depth),
+    "hyper.opts.search_depth must be an integer")
+
   -- WIP
   -- assert(type(opts.viewbox_width_ratio) == "number" and opts.viewbox_width_ratio <= 1,
   --   "hyper.opts.viewbox_width_ratio must be a number less than or equal to 1")

@@ -1,3 +1,5 @@
+local hyper = require("hyper")
+
 local uv = vim.loop
 local http = require("hyper.http-parser")
 
@@ -7,7 +9,7 @@ local function find_collections()
   local paths = vim.fs.find(function(name, _)
     return name:match('.*%.http$')
   end, {
-      limit = 5,
+      limit = hyper.opts.search_depth,
       type = 'file',
     })
 
