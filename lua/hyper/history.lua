@@ -1,6 +1,6 @@
 local Fs = require("hyper.utils.fs")
 local Http = require("hyper.utils.http")
-local Config = require("hyper.config")
+local hyper = require("hyper")
 
 local M = {}
 
@@ -13,14 +13,14 @@ local initial = {
 
 function M.read()
   pcall(function()
-    history = vim.json.decode(Fs.read_file(Config.options.history))
+    history = vim.json.decode(Fs.read_file(hyper.history_path))
   end)
   history = vim.tbl_deep_extend("force", {}, initial, history or {})
 end
 
 function M.write()
-  vim.fn.mkdir(vim.fn.fnamemodify(Config.options.history, ":p:h"), "p")
-  Fs.write_file(Config.options.history, vim.json.encode(history))
+  vim.fn.mkdir(vim.fn.fnamemodify(hyper.history_path, ":p:h"), "p")
+  Fs.write_file(hyper.history_path, vim.json.encode(history))
 end
 
 function M.__index(_, key)
@@ -71,7 +71,7 @@ function M.add_item(state)
   request.timestamp = timestamp
   history.requests[id] = request
   if history.order ~= nil then
-    if #history.order == Config.options.max_history then
+    if #history.order == hyper.opts.history_limit then
       local last_id = table.remove(history.order)
       history.requests[last_id] = nil
     end

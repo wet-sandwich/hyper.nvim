@@ -1,4 +1,4 @@
-local Config = require("hyper.config")
+local hyper = require("hyper")
 
 local Text = {}
 
@@ -34,13 +34,13 @@ function Text:render(buf)
   end
 
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-  vim.api.nvim_buf_clear_namespace(buf, Config.ns, 0, -1)
+  vim.api.nvim_buf_clear_namespace(buf, hyper.ns, 0, -1)
 
   for i, text in ipairs(self._lines) do
     if text.hl ~= nil then
       local col = text.hl.col or 0
       text.hl.col = nil
-      vim.api.nvim_buf_set_extmark(buf, Config.ns, i - 1, col, text.hl)
+      vim.api.nvim_buf_set_extmark(buf, hyper.ns, i - 1, col, text.hl)
     end
   end
 end
