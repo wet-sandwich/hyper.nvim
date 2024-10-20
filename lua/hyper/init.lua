@@ -34,8 +34,6 @@ function M.setup(opts)
   M.opts = vim.tbl_deep_extend("keep", opts or {}, defaults)
   validate_opts(M.opts)
 
-  M.layout_col_width = 25
-
   M.state_path = vim.fn.stdpath("state") .. "/hyper/" .. cwd .. "/state.json"
   M.history_path = vim.fn.stdpath("state") .. "/hyper/history.json"
 
