@@ -10,7 +10,7 @@ M.search_depth = 5
 M.viewbox_width_ratio = 0.8
 M.viewbox_height_ratio = 0.8
 
--- asf
+-- highlight groups
 M.hl_grp_StatusInfo = "DiagnosticFloatingInfo"
 M.hl_grp_StatusOkay = "DiagnosticFloatingOk"
 M.hl_grp_StatusWarning = "DiagnosticFloatingWarn"
