@@ -31,8 +31,7 @@ local function validate_opts(opts)
 end
 
 function M.setup(opts)
-  opts = opts or {}
-  M.opts = vim.tbl_deep_extend("keep", opts, defaults)
+  M.opts = vim.tbl_deep_extend("keep", opts or {}, defaults)
   validate_opts(M.opts)
 
   M.layout_col_width = 25
