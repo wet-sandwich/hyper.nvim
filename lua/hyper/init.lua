@@ -11,12 +11,23 @@ local function validate_opts(opts)
   assert(type(opts.search_depth) == "number" and opts.search_depth == math.floor(opts.search_depth),
     "hyper.opts.search_depth must be an integer")
 
-  -- WIP
-  -- assert(type(opts.viewbox_width_ratio) == "number" and opts.viewbox_width_ratio <= 1,
-  --   "hyper.opts.viewbox_width_ratio must be a number less than or equal to 1")
-  --
-  -- assert(type(opts.viewbox_height_ratio) == "number" and opts.viewbox_height_ratio <= 1,
-  --   "hyper.opts.viewbox_height_ratio must be a number less than or equal to 1")
+  assert(type(opts.viewbox_width_ratio) == "number" and opts.viewbox_width_ratio <= 1,
+    "hyper.opts.viewbox_width_ratio must be a number less than or equal to 1")
+
+  assert(type(opts.viewbox_height_ratio) == "number" and opts.viewbox_height_ratio <= 1,
+    "hyper.opts.viewbox_height_ratio must be a number less than or equal to 1")
+
+  assert(vim.fn.hlexists(opts.hl_grp_StatusInfo) ~= 0,
+    "hyper.opts.hl_grp_StatusInfo must be a valid highlight group")
+
+  assert(vim.fn.hlexists(opts.hl_grp_StatusOkay) ~= 0,
+    "hyper.opts.hl_grp_StatusOkay must be a valid highlight group")
+
+  assert(vim.fn.hlexists(opts.hl_grp_StatusWarning) ~= 0,
+    "hyper.opts.hl_grp_StatusWarning must be a valid highlight group")
+
+  assert(vim.fn.hlexists(opts.hl_grp_StatusError) ~= 0,
+    "hyper.opts.hl_grp_StatusError must be a valid highlight group")
 end
 
 function M.setup(opts)
