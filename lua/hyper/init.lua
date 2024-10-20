@@ -28,6 +28,15 @@ local function validate_opts(opts)
 
   assert(vim.fn.hlexists(opts.hl_grp_StatusError) ~= 0,
     "hyper.opts.hl_grp_StatusError must be a valid highlight group")
+
+  assert(type(opts.icon_enter) == "string",
+    "hyper.opts.icon_enter must be a string")
+
+  assert(type(opts.icon_tab) == "string",
+    "hyper.opts.icon_tab must be a string")
+
+  assert(type(opts.icon_selected) == "string",
+    "hyper.opts.icon_selected must be a string")
 end
 
 function M.setup(opts)

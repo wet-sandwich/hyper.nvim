@@ -9,8 +9,8 @@ function Radio.new(opts, syncSelection)
   local self = Float.new(opts)
   self.options = opts.options or {}
   self.syncSelection = syncSelection
-  self.selected_icon = "✔"
-  self.action_icon = "⇥"
+  self.selected_icon = hyper.opts.icon_selected
+  self.action_icon = hyper.opts.icon_tab
   setmetatable(self, { __index = setmetatable(Radio, { __index = Float }) })
   return self
 end

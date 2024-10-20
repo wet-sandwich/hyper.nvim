@@ -16,4 +16,9 @@ M.hl_grp_StatusOkay = "DiagnosticFloatingOk"
 M.hl_grp_StatusWarning = "DiagnosticFloatingWarn"
 M.hl_grp_StatusError = "DiagnosticFloatingError"
 
+-- icons
+M.icon_enter = "↵"
+M.icon_tab = "⇥"
+M.icon_selected = "✔"
+
 return M

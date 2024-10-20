@@ -1,5 +1,6 @@
 local Selector = require("hyper.view.selector")
 local Float = require("hyper.view.float")
+local hyper = require("hyper")
 
 local Popup = {}
 Popup.__index = Popup
@@ -8,7 +9,7 @@ local function new_select(opts)
   opts.relative = opts.relative or "win"
   opts.height = #opts.options
   opts.focused = true
-  opts.action_icon = "↵"
+  opts.action_icon = hyper.opts.icon_enter
   opts.enter = true
   return Selector.new(opts)
 end

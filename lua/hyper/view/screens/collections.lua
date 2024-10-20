@@ -5,6 +5,7 @@ local Collections = require("hyper.collections")
 local Text = require("hyper.view.text")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
+local hyper = require("hyper")
 
 local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.3) - 2
@@ -75,7 +76,7 @@ function M.new(mode, State)
     width = list_width,
     height = height - coll_height - 2,
     options = req_list(coll_list_win.selection + 1),
-    action_icon = "↵",
+    action_icon = hyper.opts.icon_enter,
   })
 
   local function create_preview()
