@@ -32,7 +32,7 @@ end
 
 function M.setup(opts)
   opts = opts or {}
-  M.opts = setmetatable(opts, { __index = defaults })
+  M.opts = vim.tbl_deep_extend("keep", opts, defaults)
   validate_opts(M.opts)
 
   M.layout_col_width = 25
