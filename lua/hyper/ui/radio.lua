@@ -1,5 +1,5 @@
-local Float = require("hyper.view.float")
-local Text = require("hyper.view.text")
+local Float = require("hyper.ui.float")
+local Text = require("hyper.ui.text")
 local hyper = require("hyper")
 
 local Radio = {}

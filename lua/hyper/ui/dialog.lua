@@ -1,4 +1,4 @@
-local Float = require("hyper.view.float")
+local Float = require("hyper.ui.float")
 
 local Dialog = {}
 

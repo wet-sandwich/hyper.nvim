@@ -1,5 +1,5 @@
-local Selector = require("hyper.view.selector")
-local Float = require("hyper.view.float")
+local Selector = require("hyper.ui.selector")
+local Float = require("hyper.ui.float")
 local hyper = require("hyper")
 
 local Popup = {}

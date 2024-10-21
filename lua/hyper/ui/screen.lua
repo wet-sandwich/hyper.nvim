@@ -1,4 +1,4 @@
-local Help = require("hyper.view.help")
+local Help = require("hyper.ui.help")
 
 local Screen = {}
 Screen.__index = Screen

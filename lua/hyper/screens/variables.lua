@@ -1,6 +1,6 @@
-local File = require("hyper.view.file")
-local Radio = require("hyper.view.radio")
-local Screen = require("hyper.view.screen")
+local File = require("hyper.ui.file")
+local Radio = require("hyper.ui.radio")
+local Screen = require("hyper.ui.screen")
 local Ui = require("hyper.utils.ui")
 
 local width, height, row, col = Ui.get_viewbox()

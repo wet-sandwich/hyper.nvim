@@ -1,11 +1,11 @@
-local Text = require("hyper.view.text")
-local Window = require("hyper.view.float")
-local Screen = require("hyper.view.screen")
+local Text = require("hyper.ui.text")
+local Window = require("hyper.ui.float")
+local Screen = require("hyper.ui.screen")
+local Popup = require("hyper.ui.popup")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
-local Popup = require("hyper.view.popup")
 
 local col_width = 25
 
