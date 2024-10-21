@@ -21,50 +21,24 @@ function M.open()
   local mode = State.get_state("mode") or "main"
   Envs.update_env_files(State)
 
+  --TODO: replace ifs with table lookup
   if mode == "main" then
-    M.screen = RequestScreen.new(mode, State)
+    M.screen = RequestScreen.new(State)
   end
 
   if mode == "history" then
-    M.screen = HistoryScreen.new(mode, State)
+    M.screen = HistoryScreen.new(State)
   end
 
   if mode == "variables" then
-    M.screen = VariablesScreen.new(mode, State)
+    M.screen = VariablesScreen.new(State)
   end
 
   if mode == "collections" then
-    M.screen = CollectionScreen.new(mode, State)
+    M.screen = CollectionScreen.new(State)
   end
 
   M.screen:display()
-  M:setup_cmds(mode)
-end
-
---TODO: refactor to remove
-function M:setup_cmds(mode)
-  if mode == "main" then
-    M.screen:on_key("n", "S", function()
-      State.set_state("mode", "history")
-      M.open()
-    end)
-
-    M.screen:on_key("n", "E", function()
-      State.set_state("mode", "variables")
-      M.open()
-    end)
-
-    M.screen:on_key("n", "C", function()
-      State.set_state("mode", "collections")
-      M.open()
-    end)
-  else
-    M.screen:on_key("n", "<c-o>", function()
-      M.screen:hide()
-      State.set_state("mode", "main")
-      M.open()
-    end)
-  end
 end
 
 function M.jump()

@@ -3,10 +3,12 @@ local Help = require("hyper.ui.help")
 local Screen = {}
 Screen.__index = Screen
 
-function Screen.new(mode, windows)
+function Screen.new(State, mode, windows)
   windows.isVisible = false
   windows.main = {}
+  --TODO: remove mode if we have state?
   windows.mode = mode
+  windows.State = State
   setmetatable(windows, Screen)
   return windows
 end
@@ -55,6 +57,15 @@ function Screen:hide_help()
 end
 
 function Screen:setup_cmds()
+  self:on_key("n", "<c-o>", function()
+    if self.mode == "main" then
+      return
+    end
+    self:hide()
+    self.State.set_state("mode", "main")
+    require("hyper.core").open()
+  end)
+
   self:on_key("n", "?", function()
     self:show_help()
   end)

@@ -8,7 +8,7 @@ local list_width = math.floor(width * 0.4)
 
 local M = {}
 
-function M.new(mode, State)
+function M.new(State)
   local env = State.get_state("env")
 
   local function sync_selection()
@@ -53,7 +53,7 @@ function M.new(mode, State)
     preview_win:set_file(env.selected)
   end
 
-  local VariablesScreen = Screen.new(mode, { file_picker, preview_win })
+  local VariablesScreen = Screen.new(State, "variables", { file_picker, preview_win })
 
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()

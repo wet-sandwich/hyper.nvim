@@ -14,7 +14,7 @@ local cutoff = list_width - 2
 
 local M = {}
 
-function M.new(mode, State)
+function M.new(State)
   local function create_list()
     local list = Text.new()
     for _, id in ipairs(History.order) do
@@ -58,7 +58,7 @@ function M.new(mode, State)
     content = create_preview
   })
 
-  local HistoryScreen = Screen.new(mode, { list_win, preview_win })
+  local HistoryScreen = Screen.new(State, "history", { list_win, preview_win })
 
   preview_win:add_autocmd("BufLeave", {
     callback = function()
