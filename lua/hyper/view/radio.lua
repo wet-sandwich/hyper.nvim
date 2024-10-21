@@ -1,6 +1,6 @@
 local Float = require("hyper.view.float")
 local Text = require("hyper.view.text")
-local Config = require("hyper.config")
+local hyper = require("hyper")
 
 local Radio = {}
 Radio.__index = Radio
@@ -9,8 +9,8 @@ function Radio.new(opts, syncSelection)
   local self = Float.new(opts)
   self.options = opts.options or {}
   self.syncSelection = syncSelection
-  self.selected_icon = "✔"
-  self.action_icon = "⇥"
+  self.selected_icon = hyper.opts.icon_selected
+  self.action_icon = hyper.opts.icon_tab
   setmetatable(self, { __index = setmetatable(Radio, { __index = Float }) })
   return self
 end
@@ -29,33 +29,33 @@ function Radio:create_window()
 
   if #self.options == 0 then return end
 
-  self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.hover, 0, {
+  self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.hover, 0, {
     end_col = self.width,
     hl_group = "PmenuSel",
   })
-  self.check_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, 0, {
+  self.check_extid = vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.selection, 0, {
     virt_text = {{self.selected_icon, "PmenuSel"}},
     virt_text_pos = "overlay",
   })
-  self.action_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.hover, 0, {})
+  self.action_extid = vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.hover, 0, {})
 end
 
 function Radio:update_highlight()
-  vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.hover, 0, {
+  vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.hover, 0, {
     end_col = self.width,
     hl_group = "PmenuSel",
     id = self.hl_extid,
   })
 
   local hl_select = self.selection == self.hover and "PmenuSel" or ""
-  vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, 0, {
+  vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.selection, 0, {
     virt_text = {{self.selected_icon, hl_select}},
     virt_text_pos = "overlay",
     id = self.check_extid,
   })
 
   local vt = self.hover ~= self.selection and self.action_icon or ""
-  vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.hover, 0, {
+  vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.hover, 0, {
     virt_text = {{vt, "PmenuSel"}},
     virt_text_pos = "overlay",
     id = self.action_extid,

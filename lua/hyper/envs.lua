@@ -1,3 +1,5 @@
+local hyper = require("hyper")
+
 local M = {}
 
 function M.update_env_files(State)
@@ -5,7 +7,7 @@ function M.update_env_files(State)
   local env_files = vim.fs.find(function(name, _)
     return name:match('^%.env.*') or name:match('.*%.env')
   end, {
-      limit = 4,
+      limit = hyper.opts.search_depth,
       type = 'file',
     })
 

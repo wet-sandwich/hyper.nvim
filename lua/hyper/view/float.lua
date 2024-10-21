@@ -1,4 +1,4 @@
-local Config = require("hyper.config")
+local hyper = require("hyper")
 
 local Float = {}
 Float.__index = Float
@@ -62,7 +62,7 @@ function Float:create_window()
 end
 
 function Float:render()
-  vim.api.nvim_win_set_hl_ns(self.win, Config.ns)
+  vim.api.nvim_win_set_hl_ns(self.win, hyper.ns)
   vim.api.nvim_buf_set_option(self.buf, "modifiable", true)
 
   if type(self.content) == "function" then

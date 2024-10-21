@@ -1,11 +1,11 @@
-local Config = require("hyper.config")
 local Text = require("hyper.view.text")
+local hyper = require("hyper")
 
 local M = {}
 
 function M.get_viewbox()
-  local width = math.floor(vim.o.columns * Config.viewbox.width)
-  local height = math.floor(vim.o.lines * Config.viewbox.height)
+  local width = math.floor(vim.o.columns * hyper.opts.viewbox_width_ratio)
+  local height = math.floor(vim.o.lines * hyper.opts.viewbox_height_ratio)
   local col = math.floor((vim.o.columns - width) / 2)
   local row = math.floor((vim.o.lines - height) / 2) - 2
   return width, height, row, col
@@ -116,15 +116,15 @@ end
 
 function M.get_status_hl(code)
   if code < 200 then
-    return Config.hl_grp.HttpStatusInfo
+    return hyper.opts.hl_grp_StatusInfo
   end
   if code < 300 then
-    return Config.hl_grp.HttpStatusOk
+    return hyper.opts.hl_grp_StatusOkay
   end
   if code < 400 then
-    return Config.hl_grp.HttpStatusWarning
+    return hyper.opts.hl_grp_StatusWarning
   end
-  return Config.hl_grp.HttpStatusError
+  return hyper.opts.hl_grp_StatusError
 end
 
 return M

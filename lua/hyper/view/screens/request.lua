@@ -1,12 +1,13 @@
 local Text = require("hyper.view.text")
 local Window = require("hyper.view.float")
 local Screen = require("hyper.view.screen")
-local Config = require("hyper.config")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
 local Popup = require("hyper.view.popup")
+
+local col_width = 25
 
 local strings = {
   method = "[M]ethod: ",
@@ -30,7 +31,6 @@ local M = {}
 
 function M.new(mode, State)
 
-  local col_width = Config.layout_config.col_width
   local width, height, row, col = Ui.get_viewbox()
 
   local function create_menu()
@@ -157,8 +157,8 @@ function M.new(mode, State)
     Popup.entry(state.url, {
       title = "URL",
       row = -req_height - 2,
-      col = Config.layout_config.col_width,
-      width = width - 2 * Config.layout_config.col_width,
+      col = col_width,
+      width = width - 2 * col_width,
       submit_in_insert = true,
       callback = function(entry)
         State.set_state("url", entry[1])

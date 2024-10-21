@@ -5,6 +5,7 @@ local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local History = require("hyper.history")
 local Text = require("hyper.view.text")
+local hyper = require("hyper")
 
 local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.5) - 2
@@ -38,7 +39,7 @@ function M.new(mode, State)
     height = height,
     options = create_list,
     focused = true,
-    action_icon = "↵",
+    action_icon = hyper.opts.icon_enter,
     enter = true,
   })
 

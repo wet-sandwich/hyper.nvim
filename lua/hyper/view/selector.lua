@@ -1,7 +1,7 @@
 local Float = require("hyper.view.float")
 local Text = require("hyper.view.text")
-local Config = require("hyper.config")
 local Dialog = require("hyper.view.dialog")
+local hyper = require("hyper")
 
 local Selector = {}
 Selector.__index = Selector
@@ -34,13 +34,13 @@ end
 
 function Selector:update_highlight()
   if self.has_focus then
-    self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, 0, {
+    self.hl_extid = vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.selection, 0, {
       end_col = self.width,
       hl_group = "PmenuSel",
       id = self.hl_extid,
     })
     if self.action_icon then
-      self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, Config.ns, self.selection, self.width-1, {
+      self.vt_extid = vim.api.nvim_buf_set_extmark(self.buf, hyper.ns, self.selection, self.width-1, {
         virt_text = {{self.action_icon, "PmenuSel"}},
         virt_text_pos = "overlay",
         id = self.vt_extid,
@@ -51,11 +51,11 @@ end
 
 function Selector:remove_highlight()
   if self.hl_extid then
-    vim.api.nvim_buf_del_extmark(self.buf, Config.ns, self.hl_extid)
+    vim.api.nvim_buf_del_extmark(self.buf, hyper.ns, self.hl_extid)
   end
 
   if self.vt_extid then
-    vim.api.nvim_buf_del_extmark(self.buf, Config.ns, self.vt_extid)
+    vim.api.nvim_buf_del_extmark(self.buf, hyper.ns, self.vt_extid)
   end
 end
 
