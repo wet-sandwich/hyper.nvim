@@ -1,5 +1,5 @@
 local curl = require("plenary.curl")
-local http = require("hyper.http-parser")
+local http = require("hyper.utils.http-parser")
 local Fs = require("hyper.utils.fs")
 local Ui = require("hyper.utils.ui")
 local Table = require("hyper.utils.table")

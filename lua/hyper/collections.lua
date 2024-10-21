@@ -1,7 +1,7 @@
 local hyper = require("hyper")
 
 local uv = vim.loop
-local http = require("hyper.http-parser")
+local http = require("hyper.utils.http-parser")
 
 local M = {}
 
