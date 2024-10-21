@@ -11,7 +11,7 @@ M.screen = nil
 
 State.init()
 
-function M.show()
+function M.open()
   vim.g.prev_cursor = vim.go.guicursor
 
   if M.screen and M.screen.isVisible then
@@ -41,27 +41,28 @@ function M.show()
   M:setup_cmds(mode)
 end
 
+--TODO: refactor to remove
 function M:setup_cmds(mode)
   if mode == "main" then
     M.screen:on_key("n", "S", function()
       State.set_state("mode", "history")
-      M.show()
+      M.open()
     end)
 
     M.screen:on_key("n", "E", function()
       State.set_state("mode", "variables")
-      M.show()
+      M.open()
     end)
 
     M.screen:on_key("n", "C", function()
       State.set_state("mode", "collections")
-      M.show()
+      M.open()
     end)
   else
     M.screen:on_key("n", "<c-o>", function()
       M.screen:hide()
       State.set_state("mode", "main")
-      M.show()
+      M.open()
     end)
   end
 end
@@ -82,7 +83,7 @@ function M.jump()
     if row <= req._end then
       Http.select_request(State, req)
       State.set_state("mode", "main")
-      M.show()
+      M.open()
       break
     end
   end
