@@ -1,12 +1,16 @@
+local Envs = require("hyper.envs")
 local Help = require("hyper.ui.help")
 
 local Screen = {}
 Screen.__index = Screen
 
 function Screen.new(State, mode, windows)
+  if mode == "main" or mode == "variables" then
+    Envs.update_env_files(State)
+  end
+
   windows.isVisible = false
   windows.main = {}
-  --TODO: remove mode if we have state?
   windows.mode = mode
   windows.State = State
   setmetatable(windows, Screen)

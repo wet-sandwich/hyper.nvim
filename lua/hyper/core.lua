@@ -1,15 +1,16 @@
-local RequestScreen = require("hyper.screens.request")
-local HistoryScreen = require("hyper.screens.history")
-local VariablesScreen = require("hyper.screens.variables")
-local CollectionScreen = require("hyper.screens.collections")
 local State = require("hyper.state")
-local Envs = require("hyper.envs")
-local Http = require("hyper.utils.http")
+
+State.init()
+
+local screens = {
+  main = require("hyper.screens.request").new,
+  history = require("hyper.screens.history").new,
+  variables = require("hyper.screens.variables").new,
+  collections = require("hyper.screens.collections").new,
+}
 
 local M = {}
 M.screen = nil
-
-State.init()
 
 function M.open()
   vim.g.prev_cursor = vim.go.guicursor
@@ -19,29 +20,14 @@ function M.open()
   end
 
   local mode = State.get_state("mode") or "main"
-  Envs.update_env_files(State)
 
-  --TODO: replace ifs with table lookup
-  if mode == "main" then
-    M.screen = RequestScreen.new(State)
-  end
-
-  if mode == "history" then
-    M.screen = HistoryScreen.new(State)
-  end
-
-  if mode == "variables" then
-    M.screen = VariablesScreen.new(State)
-  end
-
-  if mode == "collections" then
-    M.screen = CollectionScreen.new(State)
-  end
-
+  M.screen = screens[mode](State)
   M.screen:display()
 end
 
 function M.jump()
+  local Http = require("hyper.utils.http")
+
   local path = vim.api.nvim_buf_get_name(0)
   if vim.fn.filereadable(path) == 0 or path:match('.*%.http$') == nil then
     vim.notify("HyperJump failed: must be in a valid http file", vim.log.levels.WARN)
