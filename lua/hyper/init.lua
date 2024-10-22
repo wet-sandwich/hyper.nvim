@@ -47,6 +47,13 @@ function M.setup(opts)
   M.history_path = vim.fn.stdpath("state") .. "/hyper/history.json"
 
   M.ns = vim.api.nvim_create_namespace("hyper")
+
+  M.screen_name = {
+    main = "main",
+    variables = "variables",
+    history = "history",
+    collections = "collections",
+  }
 end
 
 return M

@@ -6,6 +6,7 @@ local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
+local hyper = require("hyper")
 
 local col_width = 25
 
@@ -127,7 +128,7 @@ function M.new(State)
     content = create_http_response,
   })
 
-  local RequestScreen = Screen.new(State, "main", { request_win, response_win })
+  local RequestScreen = Screen.new(State, hyper.screen_name.main, { request_win, response_win })
 
   response_win:add_autocmd("BufLeave", {
     callback = function()

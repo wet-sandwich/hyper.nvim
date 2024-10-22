@@ -58,7 +58,7 @@ function M.new(State)
     content = create_preview
   })
 
-  local HistoryScreen = Screen.new(State, "history", { list_win, preview_win })
+  local HistoryScreen = Screen.new(State, hyper.screen_name.history, { list_win, preview_win })
 
   preview_win:add_autocmd("BufLeave", {
     callback = function()

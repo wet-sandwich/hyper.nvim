@@ -2,6 +2,7 @@ local File = require("hyper.ui.file")
 local Radio = require("hyper.ui.radio")
 local Screen = require("hyper.ui.screen")
 local Ui = require("hyper.utils.ui")
+local hyper = require("hyper")
 
 local width, height, row, col = Ui.get_viewbox()
 local list_width = math.floor(width * 0.4)
@@ -53,7 +54,7 @@ function M.new(State)
     preview_win:set_file(env.selected)
   end
 
-  local VariablesScreen = Screen.new(State, "variables", { file_picker, preview_win })
+  local VariablesScreen = Screen.new(State, hyper.screen_name.variables, { file_picker, preview_win })
 
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()
