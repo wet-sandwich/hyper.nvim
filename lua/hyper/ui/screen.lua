@@ -1,12 +1,19 @@
-local Help = require("hyper.view.help")
+local Envs = require("hyper.envs")
+local Help = require("hyper.ui.help")
+local hyper = require("hyper")
 
 local Screen = {}
 Screen.__index = Screen
 
-function Screen.new(mode, windows)
+function Screen.new(State, mode, windows)
+  if mode == hyper.mode.main or mode == hyper.mode.variables then
+    Envs.update_env_files(State)
+  end
+
   windows.isVisible = false
   windows.main = {}
   windows.mode = mode
+  windows.State = State
   setmetatable(windows, Screen)
   return windows
 end
@@ -55,6 +62,15 @@ function Screen:hide_help()
 end
 
 function Screen:setup_cmds()
+  self:on_key("n", "<c-o>", function()
+    if self.mode == hyper.mode.main then
+      return
+    end
+    self:hide()
+    self.State.set_state("mode", hyper.mode.main)
+    require("hyper.drive").open()
+  end)
+
   self:on_key("n", "?", function()
     self:show_help()
   end)

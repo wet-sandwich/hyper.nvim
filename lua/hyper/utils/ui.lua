@@ -1,4 +1,4 @@
-local Text = require("hyper.view.text")
+local Text = require("hyper.ui.text")
 local hyper = require("hyper")
 
 local M = {}

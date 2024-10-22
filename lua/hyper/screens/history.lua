@@ -1,10 +1,10 @@
-local Float = require("hyper.view.float")
-local Selector = require("hyper.view.selector")
-local Screen = require("hyper.view.screen")
+local Float = require("hyper.ui.float")
+local Selector = require("hyper.ui.selector")
+local Screen = require("hyper.ui.screen")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local History = require("hyper.history")
-local Text = require("hyper.view.text")
+local Text = require("hyper.ui.text")
 local hyper = require("hyper")
 
 local width, height, row, col = Ui.get_viewbox()
@@ -14,7 +14,7 @@ local cutoff = list_width - 2
 
 local M = {}
 
-function M.new(mode, State)
+function M.new(State)
   local function create_list()
     local list = Text.new()
     for _, id in ipairs(History.order) do
@@ -58,7 +58,7 @@ function M.new(mode, State)
     content = create_preview
   })
 
-  local HistoryScreen = Screen.new(mode, { list_win, preview_win })
+  local HistoryScreen = Screen.new(State, hyper.mode.history, { list_win, preview_win })
 
   preview_win:add_autocmd("BufLeave", {
     callback = function()

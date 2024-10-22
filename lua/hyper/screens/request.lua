@@ -1,11 +1,12 @@
-local Text = require("hyper.view.text")
-local Window = require("hyper.view.float")
-local Screen = require("hyper.view.screen")
+local Text = require("hyper.ui.text")
+local Window = require("hyper.ui.float")
+local Screen = require("hyper.ui.screen")
+local Popup = require("hyper.ui.popup")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local Table = require("hyper.utils.table")
 local History = require("hyper.history")
-local Popup = require("hyper.view.popup")
+local hyper = require("hyper")
 
 local col_width = 25
 
@@ -29,7 +30,7 @@ local strings = {
 
 local M = {}
 
-function M.new(mode, State)
+function M.new(State)
 
   local width, height, row, col = Ui.get_viewbox()
 
@@ -127,7 +128,7 @@ function M.new(mode, State)
     content = create_http_response,
   })
 
-  local RequestScreen = Screen.new(mode, { request_win, response_win })
+  local RequestScreen = Screen.new(State, hyper.mode.main, { request_win, response_win })
 
   response_win:add_autocmd("BufLeave", {
     callback = function()
@@ -227,6 +228,21 @@ function M.new(mode, State)
     History.add_item(state)
     response_win:render()
     request_win:render()
+  end})
+
+  response_win:add_keymap({"n", "S", function()
+    State.set_state("mode", "history")
+    require("hyper.drive").open()
+  end})
+
+  response_win:add_keymap({"n", "E", function()
+    State.set_state("mode", "variables")
+    require("hyper.drive").open()
+  end})
+
+  response_win:add_keymap({"n", "C", function()
+    State.set_state("mode", "collections")
+    require("hyper.drive").open()
   end})
 
   return RequestScreen

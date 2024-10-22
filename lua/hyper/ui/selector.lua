@@ -1,6 +1,6 @@
-local Float = require("hyper.view.float")
-local Text = require("hyper.view.text")
-local Dialog = require("hyper.view.dialog")
+local Float = require("hyper.ui.float")
+local Text = require("hyper.ui.text")
+local Dialog = require("hyper.ui.dialog")
 local hyper = require("hyper")
 
 local Selector = {}

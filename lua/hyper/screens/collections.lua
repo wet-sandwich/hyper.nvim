@@ -1,8 +1,8 @@
-local Float = require("hyper.view.float")
-local Selector = require("hyper.view.selector")
-local Screen = require("hyper.view.screen")
+local Float = require("hyper.ui.float")
+local Selector = require("hyper.ui.selector")
+local Screen = require("hyper.ui.screen")
+local Text = require("hyper.ui.text")
 local Collections = require("hyper.collections")
-local Text = require("hyper.view.text")
 local Ui = require("hyper.utils.ui")
 local Http = require("hyper.utils.http")
 local hyper = require("hyper")
@@ -13,7 +13,7 @@ local coll_height = math.floor(height * 0.4)
 
 local M = {}
 
-function M.new(mode, State)
+function M.new(State)
   Collections.sync_collections(State)
   local collections = State.get_state("collections")
 
@@ -100,7 +100,7 @@ function M.new(mode, State)
     content = create_preview,
   })
 
-  local CollectionScreen = Screen.new(mode, { coll_list_win, req_list_win, req_prev_win })
+  local CollectionScreen = Screen.new(State, hyper.mode.collections, { coll_list_win, req_list_win, req_prev_win })
 
   coll_list_win:add_keymap({"n", "<Tab>", function()
     if noCollections() or emptyCollection(coll_list_win.selection + 1) then
