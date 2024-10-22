@@ -128,7 +128,7 @@ function M.new(State)
     content = create_http_response,
   })
 
-  local RequestScreen = Screen.new(State, hyper.screen_name.main, { request_win, response_win })
+  local RequestScreen = Screen.new(State, hyper.mode.main, { request_win, response_win })
 
   response_win:add_autocmd("BufLeave", {
     callback = function()

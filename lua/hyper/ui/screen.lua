@@ -1,11 +1,12 @@
 local Envs = require("hyper.envs")
 local Help = require("hyper.ui.help")
+local hyper = require("hyper")
 
 local Screen = {}
 Screen.__index = Screen
 
 function Screen.new(State, mode, windows)
-  if mode == "main" or mode == "variables" then
+  if mode == hyper.mode.main or mode == hyper.mode.variables then
     Envs.update_env_files(State)
   end
 
@@ -62,11 +63,11 @@ end
 
 function Screen:setup_cmds()
   self:on_key("n", "<c-o>", function()
-    if self.mode == "main" then
+    if self.mode == hyper.mode.main then
       return
     end
     self:hide()
-    self.State.set_state("mode", "main")
+    self.State.set_state("mode", hyper.mode.main)
     require("hyper.drive").open()
   end)
 

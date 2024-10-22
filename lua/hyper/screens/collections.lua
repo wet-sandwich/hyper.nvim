@@ -100,7 +100,7 @@ function M.new(State)
     content = create_preview,
   })
 
-  local CollectionScreen = Screen.new(State, hyper.screen_name.collections, { coll_list_win, req_list_win, req_prev_win })
+  local CollectionScreen = Screen.new(State, hyper.mode.collections, { coll_list_win, req_list_win, req_prev_win })
 
   coll_list_win:add_keymap({"n", "<Tab>", function()
     if noCollections() or emptyCollection(coll_list_win.selection + 1) then

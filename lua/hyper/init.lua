@@ -48,7 +48,7 @@ function M.setup(opts)
 
   M.ns = vim.api.nvim_create_namespace("hyper")
 
-  M.screen_name = {
+  M.mode = {
     main = "main",
     variables = "variables",
     history = "history",

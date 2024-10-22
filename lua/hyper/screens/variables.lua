@@ -54,7 +54,7 @@ function M.new(State)
     preview_win:set_file(env.selected)
   end
 
-  local VariablesScreen = Screen.new(State, hyper.screen_name.variables, { file_picker, preview_win })
+  local VariablesScreen = Screen.new(State, hyper.mode.variables, { file_picker, preview_win })
 
   preview_win:add_keymap({"n", "<c-n>", function()
     preview_win:save()

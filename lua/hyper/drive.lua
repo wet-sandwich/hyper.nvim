@@ -20,7 +20,7 @@ function M.open()
     M.screen:hide()
   end
 
-  local mode = State.get_state("mode") or "main"
+  local mode = State.get_state("mode") or hyper.mode.main
 
   M.screen = screens[mode](State)
   M.screen:display()
@@ -43,7 +43,7 @@ function M.jump()
   for _, req in ipairs(requests) do
     if row <= req._end then
       Http.select_request(State, req)
-      State.set_state("mode", "main")
+      State.set_state("mode", hyper.mode.main)
       M.open()
       break
     end
