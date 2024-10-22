@@ -1,6 +1,7 @@
 local State = require("hyper.state")
+local hyper = require("hyper")
 
-State.init()
+State.init(hyper.state_path)
 
 local screens = {
   main = require("hyper.screens.request").new,

@@ -1,5 +1,4 @@
 local Fs = require("hyper.utils.fs")
-local hyper = require("hyper")
 
 local M = {}
 
@@ -20,7 +19,8 @@ local default_state = {
   collections = {},
 }
 
-function M.init()
+function M.init(path)
+  M.state_path = path
   if next(data) ~= nil then
     return
   end
@@ -51,7 +51,7 @@ end
 function M.read()
   local saved_state = {}
   if pcall(function()
-    saved_state = vim.json.decode(Fs.read_file(hyper.state_path))
+    saved_state = vim.json.decode(Fs.read_file(M.state_path))
   end) then
     data = vim.tbl_deep_extend("force", default_state, saved_state)
   else
@@ -60,11 +60,11 @@ function M.read()
 end
 
 function M.write()
-  vim.fn.mkdir(vim.fn.fnamemodify(hyper.state_path, ":p:h"), "p")
+  vim.fn.mkdir(vim.fn.fnamemodify(M.state_path, ":p:h"), "p")
   local state = vim.deepcopy(data)
   state.res = nil
   state.mode = nil
-  Fs.write_file(hyper.state_path, vim.json.encode(state))
+  Fs.write_file(M.state_path, vim.json.encode(state))
 end
 
 return M

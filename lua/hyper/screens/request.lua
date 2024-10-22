@@ -232,17 +232,17 @@ function M.new(State)
 
   response_win:add_keymap({"n", "S", function()
     State.set_state("mode", "history")
-    require("hyper.core").open()
+    require("hyper.drive").open()
   end})
 
   response_win:add_keymap({"n", "E", function()
     State.set_state("mode", "variables")
-    require("hyper.core").open()
+    require("hyper.drive").open()
   end})
 
   response_win:add_keymap({"n", "C", function()
     State.set_state("mode", "collections")
-    require("hyper.core").open()
+    require("hyper.drive").open()
   end})
 
   return RequestScreen

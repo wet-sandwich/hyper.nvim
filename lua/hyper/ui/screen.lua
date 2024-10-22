@@ -67,7 +67,7 @@ function Screen:setup_cmds()
     end
     self:hide()
     self.State.set_state("mode", "main")
-    require("hyper.core").open()
+    require("hyper.drive").open()
   end)
 
   self:on_key("n", "?", function()
