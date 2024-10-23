@@ -222,6 +222,7 @@ function M.new(State)
   end})
 
   response_win:add_keymap({"n", "R", function()
+    response_win:clear()
     local state = State.get_state()
     local response = Http.http_request(state)
     State.set_state("res", response)

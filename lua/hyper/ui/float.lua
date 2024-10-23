@@ -69,11 +69,17 @@ function Float:render()
     local text = self.content()
     text:render(self.buf)
   else
-    vim.api.nvim_buf_set_lines(self.buf, -2, -1, false, {})
     vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, self.content)
   end
 
   vim.api.nvim_buf_set_option(self.buf, "modifiable", self.editable or false)
+end
+
+function Float:clear()
+  vim.api.nvim_buf_set_option(self.buf, "modifiable", true)
+  vim.api.nvim_buf_set_lines(self.buf, 0, -1, false, {})
+  vim.api.nvim_buf_set_option(self.buf, "modifiable", self.editable or false)
+  vim.cmd.redraw()
 end
 
 function Float:add_keymap(map)
